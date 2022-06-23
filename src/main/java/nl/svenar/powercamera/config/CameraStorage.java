@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.github.sarhatabaot.kraken.core.config.ConfigFile;
 import org.bukkit.Location;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,44 +15,16 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.Util;
+import org.jetbrains.annotations.NotNull;
 
-public class CameraStorage {
-	private File configFile;
-	private FileConfiguration config;
+public class CameraStorage extends ConfigFile<PowerCamera> {
 
-	private PowerCamera plugin;
-
-	public CameraStorage(PowerCamera plugin) {
-		this.plugin = plugin;
-
-		createConfigFile();
-	}
-
-	private void createConfigFile() {
-		configFile = new File(plugin.getDataFolder(), "camera.yml");
-		if (!configFile.exists()) {
-			configFile.getParentFile().mkdirs();
-			plugin.saveResource("camera.yml", false);
-		}
-
-		config = new YamlConfiguration();
-		try {
-			config.load(configFile);
-		} catch (IOException | InvalidConfigurationException e) {
-			e.printStackTrace();
-		}
+	public CameraStorage(@NotNull final PowerCamera plugin) {
+		super(plugin, "", "camera.yml", "");
 	}
 
 	public FileConfiguration getConfig() {
 		return this.config;
-	}
-
-	public void saveConfig() {
-		try {
-			this.config.save(this.configFile);
-		} catch (IOException e) {
-			plugin.getLogger().severe("Error saving " + configFile.getName());
-		}
 	}
 
 	public boolean create_camera(String camera_name) {
