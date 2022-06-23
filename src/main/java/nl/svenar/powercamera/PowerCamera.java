@@ -33,8 +33,9 @@ public class PowerCamera extends JavaPlugin {
 	private CoreConfig coreConfig;
     private CameraConfig cameraConfig;
 
-	private ArrayList<Camera> cameras = new ArrayList<Camera>();
-	
+	private ArrayList<Camera> cameras = new ArrayList<>();
+
+	@Override
 	public void onEnable() {
 		Instant startTime = Instant.now();
 
@@ -48,9 +49,9 @@ public class PowerCamera extends JavaPlugin {
 		// Bukkit.getServer().getPluginManager().registerEvents((Listener) new
 		// ChatEvent(this), (Plugin) this);
 
-		Bukkit.getServer().getPluginCommand("powercamera").setExecutor((CommandExecutor) new PowerCommandHandler(this));
+		Bukkit.getServer().getPluginCommand("powercamera").setExecutor(new PowerCommandHandler(this));
 		Bukkit.getServer().getPluginCommand("powercamera")
-				.setTabCompleter((TabCompleter) new PowerCommandHandler(this));
+				.setTabCompleter(new PowerCommandHandler(this));
 
 		// Load all base commands //
 		PowerCommandHandler.addPowerCommand("help", new CommandHelp(this, COMMAND_EXECUTOR.ALL, true));
@@ -66,7 +67,7 @@ public class PowerCamera extends JavaPlugin {
 		registerPermission("powercamera.command.camera.info");
 		// Register permissions //
 
-		List<String> logoLines = new ArrayList<String>();
+		List<String> logoLines = new ArrayList<>();
 		logoLines.add("  ██████   ██████");
 		logoLines.add("  ██   ██ ██     ");
 		logoLines.add("  ██████  ██     ");
@@ -97,10 +98,9 @@ public class PowerCamera extends JavaPlugin {
 		Metrics metrics = new Metrics(this, pluginId);
 	}
 
+	@Override
 	public void onDisable() {
-		if (getLogger() != null && this.getDescription() != null) {
-			getLogger().info("Disabled " + this.getDescription().getName() + " v" + this.getDescription().getVersion());
-		}
+		getLogger().info("Disabled " + this.getDescription().getName() + " v" + this.getDescription().getVersion());
 	}
 
 	private void registerPermission(String permission) {
@@ -119,8 +119,8 @@ public class PowerCamera extends JavaPlugin {
     }
 
 
-	public void setCameras(ArrayList<Camera> cameras) {
-		this.cameras = cameras;
+	public void setCameras(List<Camera> cameras) {
+		this.cameras = new ArrayList<>(cameras);
 	}
 
 	public Camera getCamera(String name) {
@@ -134,7 +134,7 @@ public class PowerCamera extends JavaPlugin {
 		return null;
 	}
 
-	public ArrayList<Camera> getCameras() {
+	public List<Camera> getCameras() {
 		return cameras;
 	}
 
@@ -193,12 +193,12 @@ public class PowerCamera extends JavaPlugin {
 			text = text.substring(0, maxLength - 5) + "...";
 		}
 
-		String divider = "";
+		StringBuilder divider = new StringBuilder("");
 		for (int i = 0; i < maxLength - text.length(); i++) {
 			if (i == (maxLength - text.length()) / 2) {
-				divider += text;
+				divider.append(text);
 			}
-			divider += "-";
+			divider.append("-");
 		}
 		return ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + divider + ChatColor.BLUE + "===";
 	}
@@ -210,11 +210,7 @@ public class PowerCamera extends JavaPlugin {
 	 */
 	public String getCommandFooter() {
 		int maxLength = getChatMaxLineLength();
-		String divider = "";
-		for (int i = 0; i < maxLength; i++) {
-			divider += "-";
-		}
-		return ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + divider + ChatColor.BLUE + "===";
+		return ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "-".repeat(Math.max(0, maxLength)) + ChatColor.BLUE + "===";
 	}
 
 	/**
