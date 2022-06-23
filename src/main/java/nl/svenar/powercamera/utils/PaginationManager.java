@@ -1,6 +1,7 @@
 package nl.svenar.powercamera.utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -9,16 +10,16 @@ import nl.svenar.powercamera.PowerCamera;
 
 public class PaginationManager {
 
-    private ArrayList<String> pageItems;
-    private String pageTitle;
-    private String pageCommand;
+    private final ArrayList<String> pageItems;
+    private final String pageTitle;
+    private final String pageCommand;
     private int currentPage;
-    private int numItemsOnPage;
+    private final int numItemsOnPage;
     private String headerMessage;
 
-    public PaginationManager(ArrayList<String> pageItems, String pageTitle, String pageCommand, int currentPage,
-            int numItemsOnPage) {
-        this.pageItems = pageItems;
+    public PaginationManager(List<String> pageItems, String pageTitle, String pageCommand, int currentPage,
+                             int numItemsOnPage) {
+        this.pageItems = new ArrayList<>(pageItems);
         this.pageTitle = pageTitle;
         this.pageCommand = pageCommand;
         this.currentPage = currentPage + 1;
@@ -38,8 +39,8 @@ public class PaginationManager {
         }
 
         int totalPages = (int) Math.ceil(pageItems.size() / (float) numItemsOnPage);
-        currentPage = currentPage < 1 ? 1 : currentPage;
-        currentPage = currentPage > totalPages ? totalPages : currentPage;
+        currentPage = Math.max(currentPage, 1);
+        currentPage = Math.min(currentPage, totalPages);
 
         int index = 0;
         for (String item : pageItems) {
@@ -51,20 +52,18 @@ public class PaginationManager {
         }
 
         String previousPageCommand = ChatColor.BLUE + "[" + ChatColor.AQUA + pageCommand + " "
-                + (currentPage - 1 < 0 ? 0 : currentPage - 1) + ChatColor.BLUE + "]";
+                + (Math.max(currentPage - 1, 0)) + ChatColor.BLUE + "]";
         String nextPageCommand = ChatColor.BLUE + "[" + ChatColor.AQUA + pageCommand + " "
-                + (currentPage + 1 > totalPages ? totalPages : currentPage + 1) + ChatColor.BLUE + "]";
+                + (Math.min(currentPage + 1, totalPages)) + ChatColor.BLUE + "]";
         String currentPageInfo = ChatColor.AQUA + String.valueOf(currentPage) + ChatColor.BLUE + "/" + ChatColor.AQUA
-                + String.valueOf(totalPages);
-        String pageCommandSpacing = "";
+                + totalPages;
+        StringBuilder pageCommandSpacing = new StringBuilder();
 
-        for (int i = 0; i < (PowerCamera.getInstance().getChatMaxLineLength()
+        pageCommandSpacing.append(" ".repeat(Math.max(0, (PowerCamera.getInstance().getChatMaxLineLength()
                 - ChatColor.stripColor(previousPageCommand).length() - ChatColor.stripColor(nextPageCommand).length()
-                - ChatColor.stripColor(currentPageInfo).length()) / 2; i++) {
-            pageCommandSpacing += " ";
-        }
+                - ChatColor.stripColor(currentPageInfo).length()) / 2)));
         if (pageCommandSpacing.length() == 0) {
-            pageCommandSpacing = "  ";
+            pageCommandSpacing = new StringBuilder("  ");
         }
         sender.sendMessage(
                 previousPageCommand + pageCommandSpacing + currentPageInfo + pageCommandSpacing + nextPageCommand);

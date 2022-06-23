@@ -13,7 +13,7 @@ public class ServerInfo {
         try {
             Matcher matcher = Pattern.compile("\\d+\\.\\d+\\.?\\d?").matcher(server.getVersion());
 
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList<>();
             while (matcher.find()) {
                 if (matcher.groupCount() > 0) {
                     results.add(matcher.group(1));
@@ -32,7 +32,7 @@ public class ServerInfo {
         try {
             Matcher matcher = Pattern.compile("-\\w+-").matcher(server.getVersion());
 
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList<>();
             while (matcher.find()) {
                 if (matcher.groupCount() > 0) {
                     results.add(matcher.group(1));

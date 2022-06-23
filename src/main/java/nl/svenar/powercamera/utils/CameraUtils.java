@@ -8,17 +8,18 @@ import org.bukkit.World;
 
 public class CameraUtils {
 
-    public static Location getLocation(String raw_world, double x, double y, double z, float yaw, float pitch) {
+    public static Location getLocation(String rawWorld, double x, double y, double z, float yaw, float pitch) {
         World world = null;
         try {
-            UUID world_uid = UUID.fromString(raw_world);
+            UUID worldUid = UUID.fromString(rawWorld);
 
-            world = Bukkit.getServer().getWorld(world_uid);
+            world = Bukkit.getServer().getWorld(worldUid);
         } catch (Exception e) {
+            //ignored
         }
 
         if (world == null) {
-            world = Bukkit.getServer().getWorld(raw_world);
+            world = Bukkit.getServer().getWorld(rawWorld);
         }
 
         if (world == null) {
@@ -29,7 +30,7 @@ public class CameraUtils {
     }
 
     /*
-     * 
+     *
      * Vector pos = armorstand.getLocation().toVector(); Vector target =
      * Bukkit.getPlayer("svenar").getLocation().toVector(); Vector velocity =
      * target.subtract(pos);
