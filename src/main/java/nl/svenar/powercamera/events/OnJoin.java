@@ -28,7 +28,7 @@ public class OnJoin implements Listener {
 					Random rand = new Random();
 					String camera_name = joinCameras.get(rand.nextInt(joinCameras.size()));
 					if (camera_name.length() > 0) {
-						if (this.plugin.getConfigCameras().camera_exists(camera_name)) {
+						if (this.plugin.getConfigCameras().cameraExists(camera_name)) {
 							this.plugin.player_camera_handler.put(e.getPlayer().getUniqueId(), new CameraHandler(plugin, e.getPlayer(), camera_name).generatePath().start());
 						}
 					}

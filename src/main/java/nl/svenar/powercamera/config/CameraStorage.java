@@ -1,7 +1,5 @@
 package nl.svenar.powercamera.config;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -9,9 +7,6 @@ import java.util.UUID;
 
 import com.github.sarhatabaot.kraken.core.config.ConfigFile;
 import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.Util;
@@ -23,33 +18,29 @@ public class CameraStorage extends ConfigFile<PowerCamera> {
 		super(plugin, "", "camera.yml", "");
 	}
 
-	public FileConfiguration getConfig() {
-		return this.config;
-	}
-
-	public boolean create_camera(String camera_name) {
-		if (camera_exists(camera_name))
+	public boolean createCamera(String cameraName) {
+		if (cameraExists(cameraName))
 			return false;
 
-		getConfig().set("cameras." + camera_name + ".duration", 10);
-		getConfig().set("cameras." + camera_name + ".points", new ArrayList<String>());
+		getConfig().set("cameras." + cameraName + ".duration", 10);
+		getConfig().set("cameras." + cameraName + ".points", new ArrayList<String>());
 		saveConfig();
 		return true;
 	}
 
-	public boolean remove_camera(String camera_name) {
-		if (!camera_exists(camera_name))
+	public boolean removeCamera(String cameraName) {
+		if (!cameraExists(cameraName))
 			return false;
 
-		getConfig().set("cameras." + get_camera_name_ignorecase(camera_name), null);
+		getConfig().set("cameras." + getCameraNameIgnorecase(cameraName), null);
 		saveConfig();
 		return true;
 	}
 
-	public boolean camera_exists(String camera_name) {
+	public boolean cameraExists(String cameraName) {
 		boolean exists = false;
 		for (String cam : getConfig().getConfigurationSection("cameras").getKeys(false)) {
-			if (cam.equalsIgnoreCase(camera_name)) {
+			if (cam.equalsIgnoreCase(cameraName)) {
 				exists = true;
 				break;
 			}
@@ -57,87 +48,87 @@ public class CameraStorage extends ConfigFile<PowerCamera> {
 		return exists;
 	}
 
-	public String get_camera_name_ignorecase(String input_name) {
-		String camera_name = null;
+	public String getCameraNameIgnorecase(String inputName) {
+		String cameraName = null;
 		for (String cam : getConfig().getConfigurationSection("cameras").getKeys(false)) {
-			if (cam.equalsIgnoreCase(input_name)) {
-				camera_name = cam;
+			if (cam.equalsIgnoreCase(inputName)) {
+				cameraName = cam;
 				break;
 			}
 		}
-		return camera_name;
+		return cameraName;
 	}
 
-	public void camera_addpoint(Location location, String easing, String camera_name) {
-		if (!camera_exists(camera_name))
+	public void cameraAddpoint(Location location, String easing, String cameraName) {
+		if (!cameraExists(cameraName))
 			return;
 
-		String new_point = "location:" + easing + ":" + Util.serializeLocation(location);
+		String newPoint = "location:" + easing + ":" + Util.serializeLocation(location);
 
-		List<String> camera_points = getConfig().getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
-		camera_points.add(new_point);
+		List<String> cameraPoints = getConfig().getStringList("cameras." + getCameraNameIgnorecase(cameraName) + ".points");
+		cameraPoints.add(newPoint);
 
-		getConfig().set("cameras." + get_camera_name_ignorecase(camera_name) + ".points", camera_points);
+		getConfig().set("cameras." + getCameraNameIgnorecase(cameraName) + ".points", cameraPoints);
 		saveConfig();
 	}
 
-	public void camera_addcommand(String command, String camera_name) {
-		if (!camera_exists(camera_name))
+	public void cameraAddCommand(String command, String cameraName) {
+		if (!cameraExists(cameraName))
 			return;
 
-		String new_point = "command:" + command;
+		String newPoint = "command:" + command;
 
-		List<String> camera_points = getConfig().getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
-		camera_points.add(new_point);
+		List<String> cameraPoints = getConfig().getStringList("cameras." + getCameraNameIgnorecase(cameraName) + ".points");
+		cameraPoints.add(newPoint);
 
-		getConfig().set("cameras." + get_camera_name_ignorecase(camera_name) + ".points", camera_points);
+		getConfig().set("cameras." + getCameraNameIgnorecase(cameraName) + ".points", cameraPoints);
 		saveConfig();
 	}
 
-	public void camera_removepoint(String camera_name, int num) {
-		if (!camera_exists(camera_name))
+	public void cameraRemovePoint(String cameraName, int num) {
+		if (!cameraExists(cameraName))
 			return;
 
-		List<String> camera_points = getConfig().getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
+		List<String> cameraPoints = getConfig().getStringList("cameras." + getCameraNameIgnorecase(cameraName) + ".points");
 
 		if (num < 0)
 			num = 0;
 
-		if (num > camera_points.size() - 1)
-			num = camera_points.size() - 1;
+		if (num > cameraPoints.size() - 1)
+			num = cameraPoints.size() - 1;
 
-		if (camera_points.size() > 0) {
+		if (!cameraPoints.isEmpty()) {
 			if (num == -1)
-				num = camera_points.size() - 1;
-			camera_points.remove(num);
+				num = cameraPoints.size() - 1;
+			cameraPoints.remove(num);
 
-			getConfig().set("cameras." + get_camera_name_ignorecase(camera_name) + ".points", camera_points);
+			getConfig().set("cameras." + getCameraNameIgnorecase(cameraName) + ".points", cameraPoints);
 			saveConfig();
 		}
 	}
 
-	public List<String> getPoints(String camera_name) {
-		if (!camera_exists(camera_name))
+	public List<String> getPoints(String cameraName) {
+		if (!cameraExists(cameraName))
 			return null;
 
-		return getConfig().getStringList("cameras." + get_camera_name_ignorecase(camera_name) + ".points");
+		return getConfig().getStringList("cameras." + getCameraNameIgnorecase(cameraName) + ".points");
 	}
 
-	public boolean setDuration(String camera_name, int duration) {
-		if (!camera_exists(camera_name))
+	public boolean setDuration(String cameraName, int duration) {
+		if (!cameraExists(cameraName))
 			return false;
 
-		getConfig().set("cameras." + get_camera_name_ignorecase(camera_name) + ".duration", duration);
+		getConfig().set("cameras." + getCameraNameIgnorecase(cameraName) + ".duration", duration);
 		saveConfig();
 		return true;
 
 	}
 
-	public int getDuration(String camera_name) {
-		if (!camera_exists(camera_name))
+	public int getDuration(String cameraName) {
+		if (!cameraExists(cameraName))
 			return -1;
 
-		return getConfig().getInt("cameras." + get_camera_name_ignorecase(camera_name) + ".duration");
+		return getConfig().getInt("cameras." + getCameraNameIgnorecase(cameraName) + ".duration");
 	}
 
 	public Set<String> getCameras() {
