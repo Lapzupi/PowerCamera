@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -21,12 +22,11 @@ import nl.svenar.powercamera.config.PluginConfig;
 import nl.svenar.powercamera.events.ChatTabExecutor;
 import nl.svenar.powercamera.events.OnJoin;
 import nl.svenar.powercamera.events.OnMove;
-import nl.svenar.powercamera.metrics.Metrics;
 
 public class PowerCamera extends JavaPlugin {
 
 	public String website_url = "https://svenar.nl/powercamera";
-	public ArrayList<String> donation_urls = new ArrayList<String>(Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar"));
+	public ArrayList<String> donation_urls = new ArrayList<>(Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar"));
 
 	private PluginDescriptionFile pdf;
 	private String plugin_chat_prefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
@@ -99,7 +99,7 @@ public class PowerCamera extends JavaPlugin {
 
 		for (String camera_name : config_cameras.getCameras()) {
 			List<String> points = config_cameras.getPoints(camera_name);
-			List<String> new_points = new ArrayList<String>();
+			List<String> new_points = new ArrayList<>();
 			for (String point : points) {
 				if (!point.startsWith("location:") && !point.startsWith("command:")) {
 					point = "location:" + point;

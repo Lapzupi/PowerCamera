@@ -9,7 +9,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 
 	<name>PowerCamera</name>
-	<url>https://powerranks.nl</url>
+	<url>https://svenar.nl/powercamera/</url>
 	<description>Create awesome cinematic videos</description>
 
 	<properties>
@@ -48,8 +48,8 @@
 				<artifactId>maven-shade-plugin</artifactId>
 				<version>${shade.plugin.version}</version>
 				<configuration>
+					<dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
 					<relocations>
-						<dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
 						<relocation>
 							<pattern>org.bstats</pattern>
 							<shadedPattern>nl.svenar.powercamera.metrics</shadedPattern>
