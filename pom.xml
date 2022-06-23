@@ -19,6 +19,7 @@
         <shade.plugin.version>3.3.0</shade.plugin.version>
         <spigot.api.version>1.18.2-R0.1-SNAPSHOT</spigot.api.version>
         <bstats.version>3.0.0</bstats.version>
+        <acf.version>0.5.1-SNAPSHOT</acf.version>
     </properties>
 
     <build>
@@ -37,6 +38,9 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -45,9 +49,18 @@
                 <version>${shade.plugin.version}</version>
                 <configuration>
                     <relocations>
+                        <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>nl.svenar.powercamera.metrics</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.commands</pattern>
+                            <shadedPattern>nl.svenar.powercamera.acf</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>co.aikar.locales</pattern>
+                            <shadedPattern>nl.svenar.powercamera.locales</shadedPattern>
                         </relocation>
                     </relocations>
                 </configuration>
@@ -81,6 +94,12 @@
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
             <version>${bstats.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>co.aikar</groupId>
+            <artifactId>acf-paper</artifactId>
+            <version>${acf.version}</version>
             <scope>compile</scope>
         </dependency>
     </dependencies>
