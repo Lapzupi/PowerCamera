@@ -37,28 +37,28 @@ public class Util {
 		return new Location(world, x, y, z, yaw, pitch);
 	}
 
-	public static int timeStringToSecondsConverter(String time_input) {
-		Matcher regex_int = Pattern.compile("^\\d+[^a-zA-Z]{0,1}$").matcher(time_input);
+	public static int timeStringToSecondsConverter(String timeInput) {
+		Matcher regex_int = Pattern.compile("^\\d+[^a-zA-Z]{0,1}$").matcher(timeInput);
 
-		Matcher regex_seconds = Pattern.compile("\\d+[sS]").matcher(time_input);
-		Matcher regex_minutes = Pattern.compile("\\d+[mM]").matcher(time_input);
-		Matcher regex_hours = Pattern.compile("\\d+[hH]").matcher(time_input);
+		Matcher regex_seconds = Pattern.compile("\\d+[sS]").matcher(timeInput);
+		Matcher regex_minutes = Pattern.compile("\\d+[mM]").matcher(timeInput);
+		Matcher regex_hours = Pattern.compile("\\d+[hH]").matcher(timeInput);
 
 		int seconds = 0;
 
 		if (regex_int.find()) {
-			seconds = Integer.parseInt(time_input);
+			seconds = Integer.parseInt(timeInput);
 		} else {
 			if (regex_seconds.find()) {
-				seconds += Integer.parseInt(time_input.substring(regex_seconds.start(), regex_seconds.end() - 1));
+				seconds += Integer.parseInt(timeInput.substring(regex_seconds.start(), regex_seconds.end() - 1));
 			}
 
 			if (regex_minutes.find()) {
-				seconds += Integer.parseInt(time_input.substring(regex_minutes.start(), regex_minutes.end() - 1)) * 60;
+				seconds += Integer.parseInt(timeInput.substring(regex_minutes.start(), regex_minutes.end() - 1)) * 60;
 			}
 
 			if (regex_hours.find()) {
-				seconds += Integer.parseInt(time_input.substring(regex_hours.start(), regex_hours.end() - 1)) * 3600;
+				seconds += Integer.parseInt(timeInput.substring(regex_hours.start(), regex_hours.end() - 1)) * 3600;
 			}
 		}
 
