@@ -174,37 +174,42 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 
     @Override
     public void run() {
-        if (plugin.player_camera_mode.get(player.getUniqueId()) == CameraMode.VIEW) {
-            if (this.ticks > cameraPathPoints.size() - 2) {
-                this.stop();
-                return;
-            }
-
-            Location currentPos = cameraPathPoints.get(this.ticks);
-            Location nextPoint = cameraPathPoints.get(this.ticks + 1);
-
-            player.teleport(cameraPathPoints.get(this.ticks));
-
-            if (cameraPathCommands.containsKey(this.ticks)) {
-                for (String cmd : cameraPathCommands.get(this.ticks)) {
-                    String command = cmd.replaceAll("%player%", player.getName());
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+        CameraMode playerCameraMode = plugin.player_camera_mode.get(player.getUniqueId());
+        switch (playerCameraMode) {
+            case VIEW -> {
+                if (this.ticks > cameraPathPoints.size() - 2) {
+                    this.stop();
+                    return;
                 }
+
+                Location currentPos = cameraPathPoints.get(this.ticks);
+                Location nextPoint = cameraPathPoints.get(this.ticks + 1);
+
+                player.teleport(cameraPathPoints.get(this.ticks));
+
+                if (cameraPathCommands.containsKey(this.ticks)) {
+                    for (String cmd : cameraPathCommands.get(this.ticks)) {
+                        String command = cmd.replace("%player%", player.getName());
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                    }
+                }
+
+                player.setVelocity(calculateVelocity(currentPos, nextPoint));
+
+                this.ticks += 1;
             }
-
-            player.setVelocity(calculateVelocity(currentPos, nextPoint));
-
-            this.ticks += 1;
-        } else {
-            if (plugin.player_camera_mode.get(player.getUniqueId()) == CameraMode.NONE)
-                return;
-            player.teleport(previousState.location());
-            if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
-                player.setGameMode(previousState.gameMode());
-            if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
-                player.setInvisible(previousState.invisible());
-            plugin.player_camera_mode.put(player.getUniqueId(), CameraMode.NONE);
-            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview ended!");
+            case PREVIEW -> {
+                player.teleport(previousState.location());
+                if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+                    player.setGameMode(previousState.gameMode());
+                if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
+                    player.setInvisible(previousState.invisible());
+                plugin.player_camera_mode.put(player.getUniqueId(), CameraMode.NONE);
+                player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview ended!");
+            }
+            case NONE -> {
+                //nothing
+            }
         }
 
     }
