@@ -21,6 +21,7 @@
 		<bstats.version>3.0.0</bstats.version>
 		<acf.version>0.5.1-SNAPSHOT</acf.version>
 		<kraken.core.version>1.3.0</kraken.core.version>
+		<configurate.version>4.1.2</configurate.version>
 	</properties>
 
 	<build>
@@ -112,6 +113,12 @@
 			<artifactId>KrakenCore</artifactId>
 			<version>${kraken.core.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.spongepowered</groupId>
+			<artifactId>configurate-yaml</artifactId>
+			<version>${configurate.version}</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

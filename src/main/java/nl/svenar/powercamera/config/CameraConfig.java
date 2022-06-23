@@ -12,9 +12,9 @@ import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.Util;
 import org.jetbrains.annotations.NotNull;
 
-public class CameraStorage extends ConfigFile<PowerCamera> {
+public class CameraConfig extends ConfigFile<PowerCamera> {
 
-	public CameraStorage(@NotNull final PowerCamera plugin) {
+	public CameraConfig(@NotNull final PowerCamera plugin) {
 		super(plugin, "", "camera.yml", "");
 	}
 

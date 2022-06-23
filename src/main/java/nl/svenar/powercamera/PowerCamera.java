@@ -15,7 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import nl.svenar.powercamera.config.CameraStorage;
+import nl.svenar.powercamera.config.CameraConfig;
 import nl.svenar.powercamera.config.PluginConfig;
 import nl.svenar.powercamera.events.OnJoin;
 import nl.svenar.powercamera.events.OnMove;
@@ -23,13 +23,13 @@ import nl.svenar.powercamera.events.OnMove;
 public class PowerCamera extends JavaPlugin {
 	private String pluginChatPrefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
 	private PluginConfig pluginConfig;
-	private CameraStorage camerasConfig;
+	private CameraConfig camerasConfig;
 
 	//These Should be in managers/caches
 	public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
 	public Map<UUID, CameraMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 	public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public Instant powercamera_start_time = Instant.now();
+	private Instant startTime = Instant.now();
 
 	@Override
 	public void onEnable() {
@@ -40,6 +40,8 @@ public class PowerCamera extends JavaPlugin {
 		Bukkit.getServer().getPluginManager().registerEvents(new OnJoin(this), this);
 
 		PaperCommandManager commandManager  = new PaperCommandManager(this);
+		commandManager.enableUnstableAPI("help");
+		commandManager.enableUnstableAPI("brigadier");
 		commandManager.registerCommand(new PowerCameraCommand(this));
 
 		setupConfig();
@@ -61,7 +63,7 @@ public class PowerCamera extends JavaPlugin {
 
 	private void setupConfig() {
 		pluginConfig = new PluginConfig(this);
-		camerasConfig = new CameraStorage(this);
+		camerasConfig = new CameraConfig(this);
 
 		pluginConfig.getConfig().set("version", null);
 		camerasConfig.getConfig().set("version", null);
@@ -113,7 +115,11 @@ public class PowerCamera extends JavaPlugin {
 		return pluginConfig;
 	}
 
-	public CameraStorage getConfigCameras() {
+	public CameraConfig getConfigCameras() {
 		return camerasConfig;
+	}
+
+	public Instant getStartTime() {
+		return startTime;
 	}
 }

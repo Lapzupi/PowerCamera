@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
+import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.PreviousState;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,14 +21,15 @@ import nl.svenar.powercamera.model.CameraMode;
 import org.jetbrains.annotations.NotNull;
 
 public class CameraHandlerRunnable extends BukkitRunnable {
-    private final int singleFrameDurationMs = 50;
 
     private int ticks = 0;
 
     private final PowerCamera plugin;
-    private Player player;
+    private final Player player;
 
     //Camera Stuff
+    private Camera camera;
+
     private String camera_name;
     private ArrayList<Location> cameraPathPoints = new ArrayList<>();
     private HashMap<Integer, ArrayList<String>> cameraPathCommands = new HashMap<>();
@@ -40,12 +42,21 @@ public class CameraHandlerRunnable extends BukkitRunnable {
         this.camera_name = cameraName;
     }
 
+    public CameraHandlerRunnable(final PowerCamera plugin, final Player player, final Camera camera) {
+        this.plugin = plugin;
+        this.player = player;
+        this.camera = camera;
+
+        this.camera_name = camera.getId();
+    }
+
     private int calcMaxPoints(int duration, int singleFrameDurationMs) {
         return (duration * 1000) / singleFrameDurationMs;
     }
 
     public CameraHandlerRunnable generatePath() {
-        int maxPoints = calcMaxPoints(this.plugin.getConfigCameras().getDuration(this.camera_name), this.singleFrameDurationMs);
+        int singleFrameDurationMs = 50;
+        int maxPoints = calcMaxPoints(this.plugin.getConfigCameras().getDuration(this.camera_name), singleFrameDurationMs);
 
         List<String> rawCameraPoints = this.plugin.getConfigCameras().getPoints(this.camera_name);
         List<String> rawCameraMovePoints = getMovementPoints(rawCameraPoints);

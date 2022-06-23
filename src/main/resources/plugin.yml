@@ -36,3 +36,5 @@ permissions:
         default: not op
     powercamera.bypass.joincamera:
         default: false
+libraries:
+    - org.spongepowered:configurate-yaml:${configurate.version}

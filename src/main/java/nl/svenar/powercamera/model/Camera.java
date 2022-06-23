@@ -9,27 +9,24 @@ import java.util.Map;
 
 public class Camera {
     private final String id;
-    private String alias;
+    private final String alias;
 
-    private List<Location> pathLocations;
-    private Map<Integer, List<String>> commands;
+    private final List<CameraPoint> points;
 
-    private int duration;
+    private final int duration;
 
     public Camera(final String id) {
         this.id = id;
         this.alias = id;
-        this.pathLocations = new ArrayList<>();
-        this.commands = new HashMap<>();
         this.duration = 10;
+        this.points = new ArrayList<>();
     }
 
-    public Camera(final String id, final String alias, final List<Location> pathLocations, final Map<Integer, List<String>> commands, final int duration) {
+    public Camera(final String id, final String alias, final int duration, final List<CameraPoint> points) {
         this.id = id;
         this.alias = alias;
-        this.pathLocations = pathLocations;
-        this.commands = commands;
         this.duration = duration;
+        this.points = points;
     }
 
     public String getId() {
@@ -40,15 +37,11 @@ public class Camera {
         return alias;
     }
 
-    public List<Location> getPathLocations() {
-        return pathLocations;
-    }
-
-    public Map<Integer, List<String>> getCommands() {
-        return commands;
-    }
-
     public int getDuration() {
         return duration;
+    }
+
+    public List<CameraPoint> getPoints() {
+        return points;
     }
 }
