@@ -1,11 +1,11 @@
 package nl.svenar.powercamera.objects;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Camera {
-
-    private String name = "";
-    private ArrayList<CameraPoint> points = new ArrayList<CameraPoint>();
+    private final String name;
+    private final ArrayList<CameraPoint> points = new ArrayList<>();
 
     public Camera(String name) {
         this.name = name;
@@ -15,11 +15,11 @@ public class Camera {
         return this.name;
     }
 
-    public void addPoint(CameraPoint camera_point) {
-        this.points.add(camera_point);
+    public void addPoint(CameraPoint cameraPoint) {
+        this.points.add(cameraPoint);
     }
 
-    public ArrayList<CameraPoint> getPoints() {
+    public List<CameraPoint> getPoints() {
         return this.points;
     }
     

@@ -9,19 +9,19 @@ public class CameraPoint {
     String type;
     String easing;
     Double duration;
-    Location point_location;
-    List<String> commands_start;
-    List<String> commands_end;
+    Location pointLocation;
+    List<String> commandsStart;
+    List<String> commandsEnd;
 
-    public CameraPoint(String type, String easing, Double duration, Location point_location,
-            List<String> commands_start, List<String> commands_end) {
+    public CameraPoint(String type, String easing, Double duration, Location pointLocation,
+                       List<String> commandsStart, List<String> commandsEnd) {
 
         this.type = type;
         this.easing = easing;
         this.duration = duration;
-        this.point_location = point_location;
-        this.commands_start = commands_start;
-        this.commands_end = commands_end;
+        this.pointLocation = pointLocation;
+        this.commandsStart = commandsStart;
+        this.commandsEnd = commandsEnd;
     }
 
     public String getType() {
@@ -37,15 +37,15 @@ public class CameraPoint {
     }
 
     public Location getLocation() {
-        return this.point_location;
+        return this.pointLocation;
     }
 
     public List<String> getStartCommands() {
-        return this.commands_start;
+        return this.commandsStart;
     }
 
     public List<String> getEndCommands() {
-        return this.commands_end;
+        return this.commandsEnd;
     }
 
 }

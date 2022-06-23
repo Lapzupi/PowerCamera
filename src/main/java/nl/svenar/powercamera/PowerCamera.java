@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandExecutor;
@@ -21,7 +22,6 @@ import nl.svenar.powercamera.commands.PowerCommand.COMMAND_EXECUTOR;
 import nl.svenar.powercamera.configuration.CameraConfig;
 import nl.svenar.powercamera.configuration.CoreConfig;
 import nl.svenar.powercamera.handlers.PowerCommandHandler;
-import nl.svenar.powercamera.metrics.Metrics;
 import nl.svenar.powercamera.objects.Camera;
 import nl.svenar.powercamera.utils.ServerInfo;
 import nl.svenar.powercamera.utils.VersionUtils;
