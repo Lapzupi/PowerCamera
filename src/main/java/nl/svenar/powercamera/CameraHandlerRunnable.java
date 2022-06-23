@@ -20,7 +20,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 
 	private int ticks = 0;
 
-	private PowerCamera plugin;
+	private final PowerCamera plugin;
 	private Player player;
 	private String camera_name;
 
@@ -81,7 +81,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 			if (type.equalsIgnoreCase("command")) {
 				int index = ((command_index) * max_points / (raw_camera_move_points.size()) - 1);
 				index = command_index == 0 ? 0 : index - 1;
-				index = index < 0 ? 0 : index;
+				index = Math.max(index, 0);
 				if (!this.cameraPathCommands.containsKey(index))
 					this.cameraPathCommands.put(index, new ArrayList<>());
 				this.cameraPathCommands.get(index).add(data);
@@ -93,7 +93,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 	}
 
 	private List<String> getMovementPoints(List<String> raw_camera_points) {
-		List<String> output = new ArrayList<String>();
+		List<String> output = new ArrayList<>();
 		for (String raw_point : raw_camera_points) {
 			String[] point_data = raw_point.split(":", 2);
 			if (point_data[0].equalsIgnoreCase("location")) {
@@ -135,7 +135,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 
 		this.plugin.player_camera_mode.put(this.player.getUniqueId(), CameraMode.VIEW);
 		runTaskTimer(this.plugin, 1L, 1L);
-		if (cameraPathPoints.size() > 0) {
+		if (!cameraPathPoints.isEmpty()) {
 			player.teleport(cameraPathPoints.get(0));
 		}
 
