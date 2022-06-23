@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,7 +17,7 @@ public abstract class PowerCommand {
 		NONE, PLAYER, CONSOLE, COMMANDBLOCK, ALL
 	}
 
-	private COMMAND_EXECUTOR ce = COMMAND_EXECUTOR.NONE;
+	private COMMAND_EXECUTOR ce;
 	private HashMap<String, PowerCommand> powerCommands = new HashMap<String, PowerCommand>();
 	private boolean showInHelp = false;
 

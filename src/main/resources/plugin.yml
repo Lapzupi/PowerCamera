@@ -5,7 +5,3 @@ api-version: 1.17
 description: ${project.description}
 authors: [svenar_nl]
 website: 'http://dev.bukkit.org/bukkit-plugins/powercamera/'
-commands:
-    powercamera:
-        description: Main command
-        aliases: [powercam, pcam, pc, cam]

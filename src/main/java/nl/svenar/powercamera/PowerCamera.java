@@ -3,22 +3,22 @@ package nl.svenar.powercamera;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import nl.svenar.powercamera.commands.CommandHelp;
-import nl.svenar.powercamera.commands.CommandReload;
-import nl.svenar.powercamera.commands.CommandCameraInfo;
-import nl.svenar.powercamera.commands.CommandCameraList;
-import nl.svenar.powercamera.commands.PowerCommand.COMMAND_EXECUTOR;
+import nl.svenar.powercamera.commands.old.CommandHelp;
+import nl.svenar.powercamera.commands.old.CommandReload;
+import nl.svenar.powercamera.commands.old.CommandCameraInfo;
+import nl.svenar.powercamera.commands.old.CommandCameraList;
+import nl.svenar.powercamera.commands.old.PowerCommand.COMMAND_EXECUTOR;
 import nl.svenar.powercamera.configuration.CameraConfig;
 import nl.svenar.powercamera.configuration.CoreConfig;
 import nl.svenar.powercamera.handlers.PowerCommandHandler;
@@ -33,7 +33,8 @@ public class PowerCamera extends JavaPlugin {
 	private CoreConfig coreConfig;
     private CameraConfig cameraConfig;
 
-	private ArrayList<Camera> cameras = new ArrayList<>();
+	private Map<String,Camera> cameras = new HashMap<>();
+	//private ArrayList<Camera> cameras = new ArrayList<>();
 
 	@Override
 	public void onEnable() {
@@ -119,25 +120,23 @@ public class PowerCamera extends JavaPlugin {
     }
 
 
-	public void setCameras(List<Camera> cameras) {
-		this.cameras = new ArrayList<>(cameras);
+//	public void setCameras(List<Camera> cameras) {
+//		this.cameras = new ArrayList<>(cameras);
+//	}
+
+	public void setCameras(final Map<String, Camera> cameras) {
+		this.cameras = cameras;
 	}
 
 	public Camera getCamera(String name) {
-		for (Camera camera : cameras) {
-			if (camera.getName().equalsIgnoreCase(name)) {
-				return camera;
-			}
-
-		}
-
+		if(cameras.containsKey(name))
+			return cameras.get(name);
 		return null;
 	}
 
-	public List<Camera> getCameras() {
+	public Map<String, Camera> getCameras() {
 		return cameras;
 	}
-
 	// =================================================================
 	// Formatters
 	//

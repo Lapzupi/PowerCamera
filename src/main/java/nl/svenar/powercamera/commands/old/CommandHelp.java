@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -16,8 +16,8 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import nl.svenar.powercamera.PowerCamera;
-import nl.svenar.powercamera.commands.PowerCommand;
-import nl.svenar.powercamera.commands.PowerCommand.COMMAND_EXECUTOR;
+import nl.svenar.powercamera.commands.old.PowerCommand;
+import nl.svenar.powercamera.commands.old.PowerCommand.COMMAND_EXECUTOR;
 
 public class PowerCommandHandler implements CommandExecutor, TabCompleter {
 
