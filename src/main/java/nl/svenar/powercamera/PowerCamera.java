@@ -2,21 +2,18 @@ package nl.svenar.powercamera;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import nl.svenar.powercamera.commands.MainCommand;
+import nl.svenar.powercamera.commands.old.MainCommand;
 import nl.svenar.powercamera.config.CameraStorage;
 import nl.svenar.powercamera.config.PluginConfig;
 import nl.svenar.powercamera.events.ChatTabExecutor;
@@ -24,21 +21,17 @@ import nl.svenar.powercamera.events.OnJoin;
 import nl.svenar.powercamera.events.OnMove;
 
 public class PowerCamera extends JavaPlugin {
-
-	public String website_url = "https://svenar.nl/powercamera";
-	public ArrayList<String> donation_urls = new ArrayList<>(Arrays.asList("https://ko-fi.com/svenar", "https://patreon.com/svenar"));
-
 	private PluginDescriptionFile pdf;
 	private String plugin_chat_prefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
 	private PluginConfig config_plugin;
 	private CameraStorage config_cameras;
 
-	public HashMap<UUID, String> player_selected_camera = new HashMap<UUID, String>(); // Selected camera name
-	public HashMap<UUID, CAMERA_MODE> player_camera_mode = new HashMap<UUID, CAMERA_MODE>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public HashMap<UUID, CameraHandler> player_camera_handler = new HashMap<UUID, CameraHandler>(); // When the player is viewing the camera (/pc start & /pc preview)
+	public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
+	public Map<UUID, CAMERA_MODE> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	public Map<UUID, CameraHandler> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 	public Instant powercamera_start_time = Instant.now();
 
-	public static enum CAMERA_MODE {
+	public enum CAMERA_MODE {
 		NONE, PREVIEW, VIEW
 	}
 
@@ -47,25 +40,22 @@ public class PowerCamera extends JavaPlugin {
 
 		plugin_chat_prefix = plugin_chat_prefix.replace("%plugin_name%", pdf.getName());
 
-		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnMove(this), (Plugin) this);
-		Bukkit.getServer().getPluginManager().registerEvents((Listener) new OnJoin(this), (Plugin) this);
-		Bukkit.getServer().getPluginCommand("powercamera").setExecutor((CommandExecutor) new MainCommand(this));
+		Bukkit.getServer().getPluginManager().registerEvents(new OnMove(this), this);
+		Bukkit.getServer().getPluginManager().registerEvents(new OnJoin(this), this);
+		Bukkit.getServer().getPluginCommand("powercamera").setExecutor(new MainCommand(this));
 		Bukkit.getServer().getPluginCommand("powercamera").setTabCompleter(new ChatTabExecutor(this));
 
 		setupConfig();
 
 		getLogger().info("Enabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
-		getLogger().info("If you'd like to donate, please visit " + donation_urls.get(0) + " or " + donation_urls.get(1));
 
-		int pluginId = 9107;
 		@SuppressWarnings("unused")
-		Metrics metrics = new Metrics(this, pluginId);
+		Metrics metrics = new Metrics(this,9107);
 	}
 
+	@Override
 	public void onDisable() {
-		if (getLogger() != null && getPluginDescriptionFile() != null) {
-			getLogger().info("Disabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
-		}
+		getLogger().info("Disabled " + getPluginDescriptionFile().getName() + " v" + getPluginDescriptionFile().getVersion());
 	}
 
 	public PluginDescriptionFile getPluginDescriptionFile() {
