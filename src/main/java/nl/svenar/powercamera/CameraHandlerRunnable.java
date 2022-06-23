@@ -3,6 +3,7 @@ package nl.svenar.powercamera;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,9 +15,8 @@ import org.bukkit.util.Vector;
 
 import nl.svenar.powercamera.model.CameraMode;
 
-public class CameraHandler extends BukkitRunnable {
-
-	private int single_frame_duration_ms = 50;
+public class CameraHandlerRunnable extends BukkitRunnable {
+	private final int singleFrameDurationMs = 50;
 
 	private int ticks = 0;
 
@@ -24,28 +24,28 @@ public class CameraHandler extends BukkitRunnable {
 	private Player player;
 	private String camera_name;
 
-	private ArrayList<Location> camera_path_points = new ArrayList<Location>();
-	private HashMap<Integer, ArrayList<String>> camera_path_commands = new HashMap<Integer, ArrayList<String>>();
+	private ArrayList<Location> cameraPathPoints = new ArrayList<>();
+	private HashMap<Integer, ArrayList<String>> cameraPathCommands = new HashMap<>();
 
 	private GameMode previous_gamemode;
 	private Location previous_player_location;
 	private boolean previous_invisible;
 
-	public CameraHandler(PowerCamera plugin, Player player, String camera_name) {
+	public CameraHandlerRunnable(PowerCamera plugin, Player player, String camera_name) {
 		this.plugin = plugin;
 		this.player = player;
 		this.camera_name = camera_name;
 	}
 
-	public CameraHandler generatePath() {
-		int max_points = (this.plugin.getConfigCameras().getDuration(this.camera_name) * 1000) / this.single_frame_duration_ms;
+	public CameraHandlerRunnable generatePath() {
+		int max_points = (this.plugin.getConfigCameras().getDuration(this.camera_name) * 1000) / this.singleFrameDurationMs;
 
 		List<String> raw_camera_points = this.plugin.getConfigCameras().getPoints(this.camera_name);
 		List<String> raw_camera_move_points = getMovementPoints(raw_camera_points);
 
 		if (raw_camera_move_points.size() - 1 == 0) {
 			for (int j = 0; j < max_points - 1; j++) {
-				this.camera_path_points.add(Util.deserializeLocation(raw_camera_move_points.get(0).split(":", 2)[1]));
+				this.cameraPathPoints.add(Util.deserializeLocation(raw_camera_move_points.get(0).split(":", 2)[1]));
 			}
 		} else {
 			for (int i = 0; i < raw_camera_move_points.size() - 1; i++) {
@@ -56,13 +56,13 @@ public class CameraHandler extends BukkitRunnable {
 				Location point = Util.deserializeLocation(raw_point);
 				Location point_next = Util.deserializeLocation(raw_point_next);
 
-				this.camera_path_points.add(point);
+				this.cameraPathPoints.add(point);
 				for (int j = 0; j < max_points / (raw_camera_move_points.size() - 1) - 1; j++) {
 					if (easing.equalsIgnoreCase("linear")) {
-						this.camera_path_points.add(translateLinear(point, point_next, j, max_points / (raw_camera_move_points.size() - 1) - 1));
+						this.cameraPathPoints.add(translateLinear(point, point_next, j, max_points / (raw_camera_move_points.size() - 1) - 1));
 					}
 					if (easing.equalsIgnoreCase("teleport")) {
-						this.camera_path_points.add(point_next);
+						this.cameraPathPoints.add(point_next);
 					}
 				}
 			}
@@ -72,7 +72,7 @@ public class CameraHandler extends BukkitRunnable {
 		for (String raw_point : raw_camera_points) {
 			String type = raw_point.split(":", 3)[0];
 //			String easing = raw_point.split(":", 3)[1];
-			String data = raw_point.split(":", (type == "location" ? 3 : 2))[type == "location" ? 2 : 1];
+			String data = raw_point.split(":", (Objects.equals(type, "location") ? 3 : 2))["location".equals(type) ? 2 : 1];
 
 			if (type.equalsIgnoreCase("location")) {
 				command_index += 1;
@@ -82,9 +82,9 @@ public class CameraHandler extends BukkitRunnable {
 				int index = ((command_index) * max_points / (raw_camera_move_points.size()) - 1);
 				index = command_index == 0 ? 0 : index - 1;
 				index = index < 0 ? 0 : index;
-				if (!this.camera_path_commands.containsKey(index))
-					this.camera_path_commands.put(index, new ArrayList<String>());
-				this.camera_path_commands.get(index).add(data);
+				if (!this.cameraPathCommands.containsKey(index))
+					this.cameraPathCommands.put(index, new ArrayList<>());
+				this.cameraPathCommands.get(index).add(data);
 //				this.camera_path_commands.put(index, raw_camera_points.get(0));
 			}
 		}
@@ -123,7 +123,7 @@ public class CameraHandler extends BukkitRunnable {
 		return start + ((double) progress / (double) progress_max) * (end - start);
 	}
 
-	public CameraHandler start() {
+	public CameraHandlerRunnable start() {
 		this.previous_gamemode = this.player.getGameMode();
 		this.previous_player_location = this.player.getLocation();
 		this.previous_invisible = Util.isPlayerInvisible(this.player);
@@ -135,8 +135,8 @@ public class CameraHandler extends BukkitRunnable {
 
 		this.plugin.player_camera_mode.put(this.player.getUniqueId(), CameraMode.VIEW);
 		runTaskTimer(this.plugin, 1L, 1L);
-		if (camera_path_points.size() > 0) {
-			player.teleport(camera_path_points.get(0));
+		if (cameraPathPoints.size() > 0) {
+			player.teleport(cameraPathPoints.get(0));
 		}
 
 		if (!this.player.hasPermission("powercamera.hidestartmessages"))
@@ -144,11 +144,12 @@ public class CameraHandler extends BukkitRunnable {
 		return this;
 	}
 
-	public CameraHandler stop() {
+	public CameraHandlerRunnable stop() {
 		plugin.player_camera_mode.put(player.getUniqueId(), CameraMode.NONE);
 		try {
 			this.cancel();
 		} catch (Exception e) {
+			//ignored
 		}
 
 		player.teleport(previous_player_location);
@@ -169,18 +170,18 @@ public class CameraHandler extends BukkitRunnable {
 	@Override
 	public void run() {
 		if (plugin.player_camera_mode.get(player.getUniqueId()) == CameraMode.VIEW) {
-			if (this.ticks > camera_path_points.size() - 2) {
+			if (this.ticks > cameraPathPoints.size() - 2) {
 				this.stop();
 				return;
 			}
 
-			Location current_pos = camera_path_points.get(this.ticks);
-			Location next_point = camera_path_points.get(this.ticks + 1);
+			Location current_pos = cameraPathPoints.get(this.ticks);
+			Location next_point = cameraPathPoints.get(this.ticks + 1);
 
-			player.teleport(camera_path_points.get(this.ticks));
+			player.teleport(cameraPathPoints.get(this.ticks));
 
-			if (camera_path_commands.containsKey(this.ticks)) {
-				for (String cmd : camera_path_commands.get(this.ticks)) {
+			if (cameraPathCommands.containsKey(this.ticks)) {
+				for (String cmd : cameraPathCommands.get(this.ticks)) {
 					String command = cmd.replaceAll("%player%", player.getName());
 					Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
 				}
@@ -203,7 +204,7 @@ public class CameraHandler extends BukkitRunnable {
 
 	}
 
-	public CameraHandler preview(Player player, int num, int preview_time) {
+	public CameraHandlerRunnable preview(Player player, int num, int preview_time) {
 		List<String> camera_points = plugin.getConfigCameras().getPoints(camera_name);
 
 		if (num < 0)

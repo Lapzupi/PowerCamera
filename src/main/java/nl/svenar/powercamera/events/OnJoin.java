@@ -8,7 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraHandlerRunnable;
 import nl.svenar.powercamera.PowerCamera;
 
 public class OnJoin implements Listener {
@@ -29,7 +29,7 @@ public class OnJoin implements Listener {
 					String camera_name = joinCameras.get(rand.nextInt(joinCameras.size()));
 					if (camera_name.length() > 0) {
 						if (this.plugin.getConfigCameras().cameraExists(camera_name)) {
-							this.plugin.player_camera_handler.put(e.getPlayer().getUniqueId(), new CameraHandler(plugin, e.getPlayer(), camera_name).generatePath().start());
+							this.plugin.player_camera_handler.put(e.getPlayer().getUniqueId(), new CameraHandlerRunnable(plugin, e.getPlayer(), camera_name).generatePath().start());
 						}
 					}
 				}

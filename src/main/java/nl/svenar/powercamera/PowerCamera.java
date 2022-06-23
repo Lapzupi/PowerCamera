@@ -28,7 +28,7 @@ public class PowerCamera extends JavaPlugin {
 	//These Should be in managers/caches
 	public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
 	public Map<UUID, CameraMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public Map<UUID, CameraHandler> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 	public Instant powercamera_start_time = Instant.now();
 
 	@Override
