@@ -116,7 +116,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.spongepowered</groupId>
-			<artifactId>configurate-yaml</artifactId>
+			<artifactId>configurate-hocon</artifactId>
 			<version>${configurate.version}</version>
 			<scope>provided</scope>
 		</dependency>
