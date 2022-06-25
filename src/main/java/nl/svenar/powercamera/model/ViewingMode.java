@@ -1,5 +1,5 @@
 package nl.svenar.powercamera.model;
 
-public enum CameraMode {
+public enum ViewingMode {
     NONE, PREVIEW, VIEW
 }
