@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 public class CameraConfig extends ConfigFile<PowerCamera> {
 
 	public CameraConfig(@NotNull final PowerCamera plugin) {
-		super(plugin, "", "camera.yml", "");
+		super(plugin, "", "camera.conf", "");
 	}
 
 	public boolean createCamera(String cameraName) {
