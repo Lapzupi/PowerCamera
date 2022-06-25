@@ -8,15 +8,15 @@ import java.util.List;
  * @author sarhatabaot
  */
 public class CameraPoint {
-    private String type;
-    private String easing;
+    private Type type; //move, teleport,...?
+    private Easing easing; //linear, none, ...?
     private Double duration;
     private Location location;
     private List<String> commandsStart;
     private List<String> commandsEnd;
 
 
-    public CameraPoint(final String type, final String easing, final Double duration, final Location location, final List<String> commandsStart, final List<String> commandsEnd) {
+    public CameraPoint(final Type type, final Easing easing, final Double duration, final Location location, final List<String> commandsStart, final List<String> commandsEnd) {
         this.type = type;
         this.easing = easing;
         this.duration = duration;
@@ -25,11 +25,11 @@ public class CameraPoint {
         this.commandsEnd = commandsEnd;
     }
 
-    public String getType() {
+    public Type getType() {
         return type;
     }
 
-    public String getEasing() {
+    public Easing getEasing() {
         return easing;
     }
 
@@ -47,5 +47,28 @@ public class CameraPoint {
 
     public List<String> getCommandsEnd() {
         return commandsEnd;
+    }
+
+    public enum Easing {
+        LINEAR, NONE;
+    }
+    public enum Type {
+        MOVE, TELEPORT, NONE;
+    }
+
+    public void setType(final Type type) {
+        this.type = type;
+    }
+
+    public void setEasing(final Easing easing) {
+        this.easing = easing;
+    }
+
+    public void setDuration(final Double duration) {
+        this.duration = duration;
+    }
+
+    public void setLocation(final Location location) {
+        this.location = location;
     }
 }
