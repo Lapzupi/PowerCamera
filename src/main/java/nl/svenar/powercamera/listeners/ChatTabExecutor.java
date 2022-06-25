@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.events;
+package nl.svenar.powercamera.listeners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import nl.svenar.powercamera.PowerCamera;
 
+@Deprecated
 public class ChatTabExecutor implements TabCompleter {
 
 	private PowerCamera plugin;
