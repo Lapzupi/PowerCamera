@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ public class cmd_addpoint extends PowerCameraCommand {
 			if (args.length == 0) {
 				String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 				if (camera_name != null) {
-					plugin.getConfigCameras().camera_addpoint(((Player) sender).getLocation(), easing, camera_name);
+					plugin.getConfigCameras().cameraAddpoint(((Player) sender).getLocation(), easing, camera_name);
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Point added to camera '" + camera_name + "'!");
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");
@@ -32,7 +32,7 @@ public class cmd_addpoint extends PowerCameraCommand {
 				easing = args[0];
 				if (easing.equalsIgnoreCase("linear") || easing.equalsIgnoreCase("teleport")) {
 					if (camera_name != null) {
-						plugin.getConfigCameras().camera_addpoint(((Player) sender).getLocation(), easing, camera_name);
+						plugin.getConfigCameras().cameraAddpoint(((Player) sender).getLocation(), easing, camera_name);
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Point added to camera '" + camera_name + "'!");
 					} else {
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");

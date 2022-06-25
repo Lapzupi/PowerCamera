@@ -1,11 +1,6 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.TimeZone;
-
-import org.bukkit.Bukkit;
+import nl.svenar.powercamera.commands.old.PowerCameraCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

@@ -1,11 +1,12 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
+import nl.svenar.powercamera.model.ViewingMode;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraHandlerRunnable;
 import nl.svenar.powercamera.PowerCamera;
 
 public class cmd_start extends PowerCameraCommand {
@@ -18,10 +19,10 @@ public class cmd_start extends PowerCameraCommand {
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (args.length == 0) {
 			if (sender.hasPermission("powercamera.cmd.start")) {
-				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
+				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == ViewingMode.NONE) {
 					String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 					if (camera_name != null) {
-						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandler(plugin, (Player) sender, camera_name).generatePath().start());
+						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandlerRunnable(plugin, (Player) sender, camera_name).generatePath().start());
 					} else {
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Select a camera by doing: /" + commandLabel + " select <name>");
@@ -37,9 +38,9 @@ public class cmd_start extends PowerCameraCommand {
 			String camera_name = args[0];
 
 			if (sender.hasPermission("powercamera.cmd.start." + camera_name.toLowerCase())) {
-				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
-					if (this.plugin.getConfigCameras().camera_exists(camera_name)) {
-						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandler(plugin, (Player) sender, camera_name).generatePath().start());
+				if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == ViewingMode.NONE) {
+					if (this.plugin.getConfigCameras().cameraExists(camera_name)) {
+						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandlerRunnable(plugin, (Player) sender, camera_name).generatePath().start());
 					} else {
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "Camera '" + camera_name + "' not found!");
 					}

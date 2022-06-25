@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -24,7 +24,7 @@ public class cmd_delpoint extends PowerCameraCommand {
 
 				String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 				if (camera_name != null) {
-					plugin.getConfigCameras().camera_removepoint(camera_name, num);
+					plugin.getConfigCameras().cameraRemovePoint(camera_name, num);
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Point " + num + " removed from camera '" + camera_name + "'!");
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");

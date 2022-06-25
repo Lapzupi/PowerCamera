@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -20,7 +20,7 @@ public class cmd_addcommand extends PowerCameraCommand {
 				String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 				if (camera_name != null) {
 					String command = String.join(" ", args);
-					plugin.getConfigCameras().camera_addcommand(command, camera_name);
+					plugin.getConfigCameras().cameraAddCommand(command, camera_name);
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Command added to camera '" + camera_name + "'!");
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");

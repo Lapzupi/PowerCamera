@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -17,7 +17,7 @@ public class cmd_remove extends PowerCameraCommand {
 		if (sender.hasPermission("powercamera.cmd.remove")) {
 			if (args.length == 1) {
 				String camera_name = args[0];
-				if (plugin.getConfigCameras().remove_camera(camera_name)) {
+				if (plugin.getConfigCameras().removeCamera(camera_name)) {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Camera '" + camera_name + "' deleted!");
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "A camera with the name '" + camera_name + "' does not exists!");

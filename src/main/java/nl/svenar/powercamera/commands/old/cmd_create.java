@@ -1,4 +1,4 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -18,10 +18,10 @@ public class cmd_create extends PowerCameraCommand {
 		if (sender.hasPermission("powercamera.cmd.create")) {
 			if (args.length == 1) {
 				String camera_name = args[0];
-				if (plugin.getConfigCameras().create_camera(camera_name)) {
+				if (plugin.getConfigCameras().createCamera(camera_name)) {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Camera '" + camera_name + "' created!");
 //					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Select this camera by doing: /" + commandLabel + " select " + camera_name + "");
-					plugin.player_selected_camera.put(((Player) sender).getUniqueId(), plugin.getConfigCameras().get_camera_name_ignorecase(camera_name));
+					plugin.player_selected_camera.put(((Player) sender).getUniqueId(), plugin.getConfigCameras().getCameraNameIgnorecase(camera_name));
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Camera '" + camera_name + "' selected!");
 				} else {
 					sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "A camera with the name '" + camera_name + "' already exists!");

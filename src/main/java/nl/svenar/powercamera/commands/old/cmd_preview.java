@@ -1,12 +1,13 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 
+import nl.svenar.powercamera.model.ViewingMode;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraHandlerRunnable;
 import nl.svenar.powercamera.PowerCamera;
 
 public class cmd_preview extends PowerCameraCommand {
@@ -18,7 +19,7 @@ public class cmd_preview extends PowerCameraCommand {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		if (sender.hasPermission("powercamera.cmd.preview")) {
-			if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
+			if (this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == null || this.plugin.player_camera_mode.get(((Player) sender).getUniqueId()) == ViewingMode.NONE) {
 				if (args.length == 1) {
 					String camera_name = plugin.player_selected_camera.get(((Player) sender).getUniqueId());
 					if (camera_name != null) {
@@ -26,7 +27,7 @@ public class cmd_preview extends PowerCameraCommand {
 
 						int num = Integer.parseInt(args[0]) - 1;
 
-						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandler(plugin, (Player) sender, camera_name).generatePath().preview((Player) sender, num, preview_time));
+						this.plugin.player_camera_handler.put(((Player) sender).getUniqueId(), new CameraHandlerRunnable(plugin, (Player) sender, camera_name).generatePath().preview((Player) sender, num, preview_time));
 
 					} else {
 						sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "No camera selected!");

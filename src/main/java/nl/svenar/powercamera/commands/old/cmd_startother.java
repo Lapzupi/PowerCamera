@@ -1,12 +1,13 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
+import nl.svenar.powercamera.model.ViewingMode;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import nl.svenar.powercamera.CameraHandler;
+import nl.svenar.powercamera.CameraHandlerRunnable;
 import nl.svenar.powercamera.PowerCamera;
 
 public class cmd_startother extends PowerCameraCommand {
@@ -24,9 +25,9 @@ public class cmd_startother extends PowerCameraCommand {
 				Player target_player = Bukkit.getPlayer(target_name);
 
 				if (target_player != null) {
-					if (this.plugin.player_camera_mode.get(target_player.getUniqueId()) == null || this.plugin.player_camera_mode.get(target_player.getUniqueId()) == PowerCamera.CAMERA_MODE.NONE) {
-						if (this.plugin.getConfigCameras().camera_exists(camera_name)) {
-							this.plugin.player_camera_handler.put(target_player.getUniqueId(), new CameraHandler(plugin, target_player, camera_name).generatePath().start());
+					if (this.plugin.player_camera_mode.get(target_player.getUniqueId()) == null || this.plugin.player_camera_mode.get(target_player.getUniqueId()) == ViewingMode.NONE) {
+						if (this.plugin.getConfigCameras().cameraExists(camera_name)) {
+							this.plugin.player_camera_handler.put(target_player.getUniqueId(), new CameraHandlerRunnable(plugin, target_player, camera_name).generatePath().start());
 							sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Playing '" + camera_name + "' on player: " + target_player.getName());
 						} else {
 							sender.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "Camera '" + camera_name + "' not found!");

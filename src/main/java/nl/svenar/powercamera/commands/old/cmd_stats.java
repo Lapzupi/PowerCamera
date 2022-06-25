@@ -1,10 +1,11 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.TimeZone;
 
+import nl.svenar.powercamera.commands.old.PowerCameraCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -44,7 +45,7 @@ public class cmd_stats extends PowerCameraCommand {
 				sender.sendMessage(ChatColor.DARK_GREEN + "Server version: " + ChatColor.GREEN + Bukkit.getVersion());
 				sender.sendMessage(ChatColor.DARK_GREEN + "Bukkit version: " + ChatColor.GREEN + Bukkit.getServer().getBukkitVersion());
 				sender.sendMessage(ChatColor.DARK_GREEN + "Java version: " + ChatColor.GREEN + System.getProperty("java.version"));
-				sender.sendMessage(ChatColor.DARK_GREEN + plugin.getPluginDescriptionFile().getName() + " Version: " + ChatColor.GREEN + plugin.getPluginDescriptionFile().getVersion());
+				sender.sendMessage(ChatColor.DARK_GREEN + plugin.getDescription().getName() + " Version: " + ChatColor.GREEN + plugin.getPluginDescriptionFile().getVersion());
 				sender.sendMessage(ChatColor.DARK_GREEN + "Plugin uptime: " + ChatColor.GREEN + format.format(Duration.between(plugin.powercamera_start_time, current_time).toMillis()));
 				sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getConfigCameras().getCameras().size());
 				sender.sendMessage(ChatColor.DARK_GREEN + "Registered players: " + ChatColor.GREEN + plugin.getConfigCameras().getPlayers().size());

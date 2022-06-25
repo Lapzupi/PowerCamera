@@ -1,5 +1,6 @@
-package nl.svenar.powercamera.commands;
+package nl.svenar.powercamera.commands.old;
 
+import nl.svenar.powercamera.commands.old.PowerCameraCommand;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
