@@ -1,11 +1,7 @@
 package nl.svenar.powercamera.model;
 
-import org.bukkit.Location;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Camera {
     private final String id;
@@ -13,21 +9,21 @@ public class Camera {
 
     private final List<CameraPoint> points;
 
-    private final int duration;
+    private boolean returnToOrigin;
 
     public Camera(final String id) {
         this.id = id;
         this.alias = id;
-        this.duration = 10;
         this.points = new ArrayList<>();
     }
 
-    public Camera(final String id, final String alias, final int duration, final List<CameraPoint> points) {
+    public Camera(final String id, final String alias, final List<CameraPoint> points, final boolean returnToOrigin) {
         this.id = id;
         this.alias = alias;
-        this.duration = duration;
         this.points = points;
+        this.returnToOrigin = returnToOrigin;
     }
+
 
     public String getId() {
         return id;
@@ -37,11 +33,12 @@ public class Camera {
         return alias;
     }
 
-    public int getDuration() {
-        return duration;
-    }
 
     public List<CameraPoint> getPoints() {
         return points;
+    }
+
+    public boolean isReturnToOrigin() {
+        return returnToOrigin;
     }
 }
