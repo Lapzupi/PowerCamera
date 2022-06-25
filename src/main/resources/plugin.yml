@@ -6,35 +6,10 @@ description: ${project.description}
 authors: [svenar_nl]
 website: ${project.url}
 permissions:
-    powercamera.cmd.help:
-        default: op
-    powercamera.cmd.create:
-        default: op
-    powercamera.cmd.remove:
-        default: op
-    powercamera.cmd.addpoint:
-        default: op
-    powercamera.cmd.delpoint:
-        default: op
-    powercamera.cmd.select:
-        default: op
-    powercamera.cmd.preview:
-        default: op
-    powercamera.cmd.info:
-        default: op
-    powercamera.cmd.setduration:
-        default: op
-    powercamera.cmd.start:
-        default: op
-    powercamera.cmd.startother:
-        default: op
-    powercamera.cmd.stop:
-        default: op
-    powercamera.cmd.stats:
-        default: op
     powercamera.hidestartmessages:
         default: not op
     powercamera.bypass.joincamera:
         default: false
 libraries:
-    - org.spongepowered:configurate-yaml:${configurate.version}
+    - org.spongepowered:configurate-hocon:${configurate.version}
+    - org.spongepowered:configurate-gson:${configurate.version}
