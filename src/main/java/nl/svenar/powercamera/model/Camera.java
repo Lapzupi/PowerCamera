@@ -38,7 +38,25 @@ public class Camera {
         return points;
     }
 
+    public void addPoint(final CameraPoint cameraPoint) {
+        points.add(cameraPoint);
+    }
+
+    public void deletePoint(final int num) {
+        points.remove(num);
+    }
+
     public boolean isReturnToOrigin() {
         return returnToOrigin;
+    }
+
+    @Override
+    public String toString() {
+        return "Camera{" +
+                "id='" + id + '\'' +
+                ", alias='" + alias + '\'' +
+                ", points=" + points +
+                ", returnToOrigin=" + returnToOrigin +
+                '}';
     }
 }
