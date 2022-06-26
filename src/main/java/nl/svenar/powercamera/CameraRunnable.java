@@ -225,10 +225,6 @@ public class CameraRunnable extends BukkitRunnable {
         if (num > cameraPoints.size() - 1)
             num = cameraPoints.size() - 1;
 
-        if (!cameraPoints.get(num).split(":", 2)[0].equalsIgnoreCase("location")) {
-            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.RED + "Point " + (num + 1) + " is not a location!");
-            return this;
-        }
 
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview started of point " + (num + 1) + "!");
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Ending in " + previewTime + " seconds.");
@@ -236,7 +232,7 @@ public class CameraRunnable extends BukkitRunnable {
         this.previousState = PreviousState.fromPlayer(player);
         Location point = Util.deserializeLocation(cameraPoints.get(num).split(":", 3)[2]);
 
-        plugin.player_camera_mode.put(player.getUniqueId(), ViewingMode.PREVIEW);
+        plugin.getPlayerManager().setViewingMode(player.getUniqueId(),ViewingMode.PREVIEW);
         if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
             player.setGameMode(GameMode.SPECTATOR);
         if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))

@@ -22,17 +22,14 @@ import org.spongepowered.configurate.ConfigurateException;
 public class PowerCamera extends JavaPlugin {
 	private final String pluginChatPrefix = ChatColor.BLACK + "[" + ChatColor.AQUA + getDescription().getName() + ChatColor.BLACK + "] ";
 
-	private CameraConfig camerasConfig;
-
 	private PluginConfig pluginConfig;
 	private CameraStorage cameraStorage;
 
 	//These Should be in managers/caches
 	private PlayerManager playerManager;
 
-	@Deprecated public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
-	@Deprecated public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
-	@Deprecated public Map<UUID, CameraRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	@Deprecated
+	public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 
 	private final Instant startTime = Instant.now();
 
@@ -57,8 +54,6 @@ public class PowerCamera extends JavaPlugin {
 		commandManager.enableUnstableAPI("brigadier");
 		commandManager.registerCommand(new PowerCameraCommand(this));
 
-		setupConfig();
-
 		getLogger().info(() -> "Enabled %s v%s".formatted(getDescription().getName(),getDescription().getVersion()));
 		@SuppressWarnings("unused")
 		Metrics metrics = new Metrics(this,9107);
@@ -73,17 +68,11 @@ public class PowerCamera extends JavaPlugin {
 		return pluginChatPrefix;
 	}
 
-	private void setupConfig() {
-		camerasConfig = new CameraConfig(this);
-	}
 
 	public PluginConfig getConfigPlugin() {
 		return pluginConfig;
 	}
 
-	public CameraConfig getConfigCameras() {
-		return camerasConfig;
-	}
 
 	public Instant getStartTime() {
 		return startTime;
