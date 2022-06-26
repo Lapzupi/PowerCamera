@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import nl.svenar.powercamera.model.ViewingMode;
-
+//todo
 public class CameraHandlerRunnable extends BukkitRunnable {
 
     private int ticks = 0;
@@ -32,12 +32,6 @@ public class CameraHandlerRunnable extends BukkitRunnable {
     private HashMap<Integer, ArrayList<String>> cameraPathCommands = new HashMap<>();
 
     private PreviousState previousState;
-
-    public CameraHandlerRunnable(final PowerCamera plugin,final Player player, String cameraName) {
-        this.plugin = plugin;
-        this.player = player;
-        this.camera_name = cameraName;
-    }
 
     public CameraHandlerRunnable(final PowerCamera plugin, final Player player, final Camera camera) {
         this.plugin = plugin;
@@ -253,4 +247,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
         return this;
     }
 
+    public Camera getCamera() {
+        return camera;
+    }
 }
