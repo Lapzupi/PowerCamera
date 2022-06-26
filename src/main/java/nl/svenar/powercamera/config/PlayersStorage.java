@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author sarhatabaot
+ * @author sarhatabaot TODO
  */
 public class PlayersStorage extends JsonConfigurateFile<PowerCamera> {
     private Map<String, List<String>> cameraPlayedMap;

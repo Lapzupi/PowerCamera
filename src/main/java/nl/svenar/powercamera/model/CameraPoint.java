@@ -2,6 +2,7 @@ package nl.svenar.powercamera.model;
 
 import org.bukkit.Location;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,6 +24,15 @@ public class CameraPoint {
         this.location = location;
         this.commandsStart = commandsStart;
         this.commandsEnd = commandsEnd;
+    }
+
+    public CameraPoint(final Type type, final Easing easing, final Double duration, final Location location) {
+        this.type = type;
+        this.easing = easing;
+        this.duration = duration;
+        this.location = location;
+        this.commandsStart = new ArrayList<>();
+        this.commandsEnd = new ArrayList<>();
     }
 
     public Type getType() {
@@ -70,5 +80,17 @@ public class CameraPoint {
 
     public void setLocation(final Location location) {
         this.location = location;
+    }
+
+    @Override
+    public String toString() {
+        return "CameraPoint{" +
+                "type=" + type +
+                ", easing=" + easing +
+                ", duration=" + duration +
+                ", location=" + location +
+                ", commandsStart=" + commandsStart +
+                ", commandsEnd=" + commandsEnd +
+                '}';
     }
 }

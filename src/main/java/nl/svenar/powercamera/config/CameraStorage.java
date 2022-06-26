@@ -57,11 +57,7 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
         return null;
     }
 
-    @Nullable
     public Camera getCamera(final String id) {
-        if(!hasCamera(id))
-            return null;
-
         return cameras.get(id);
     }
 
@@ -77,6 +73,26 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
     public boolean hasCamera(final String id) {
         return cameras.containsKey(id);
     }
+
+    //todo
+    public void createCamera(final String id) throws ConfigurateException {
+
+    }
+
+    public void deleteCamera(final String id) {
+
+    }
+
+    public void saveCamera(final @NotNull Camera camera) {
+        final String cameraId = camera.getId();
+        try {
+            rootNode.node(cameraId).set(camera);
+            loader.save(rootNode);
+        } catch (ConfigurateException e) {
+            //
+        }
+    }
+
 
     public static class CameraSerializer implements TypeSerializer<Camera> {
         public static final CameraSerializer INSTANCE = new CameraSerializer();

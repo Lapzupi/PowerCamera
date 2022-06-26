@@ -29,6 +29,8 @@ public class PowerCamera extends JavaPlugin {
 	private CameraStorage cameraStorage;
 
 	//These Should be in managers/caches
+	private PlayerManager playerManager;
+
 	public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
 	public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 	public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
@@ -56,7 +58,7 @@ public class PowerCamera extends JavaPlugin {
 		commandManager.registerCommand(new PowerCameraCommand(this));
 
 		setupConfig();
-
+		
 		getLogger().info("Enabled " + getDescription().getName() + " v" + getDescription().getVersion());
 
 		@SuppressWarnings("unused")
@@ -87,5 +89,13 @@ public class PowerCamera extends JavaPlugin {
 
 	public Instant getStartTime() {
 		return startTime;
+	}
+
+	public CameraStorage getCameraStorage() {
+		return cameraStorage;
+	}
+
+	public PlayerManager getPlayerManager() {
+		return playerManager;
 	}
 }
