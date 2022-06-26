@@ -2,12 +2,15 @@ package nl.svenar.powercamera.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Camera {
     private final String id;
     private final String alias;
 
     private final List<CameraPoint> points;
+
+    private Double totalDuration;
 
     private boolean returnToOrigin;
 
@@ -48,6 +51,21 @@ public class Camera {
 
     public boolean isReturnToOrigin() {
         return returnToOrigin;
+    }
+
+    public Double calculateTotalDuration() {
+        return getPoints().stream().map(CameraPoint::getDuration).mapToDouble(Double::doubleValue).sum();
+    }
+
+    public Double getTotalDuration() {
+        if(totalDuration == null) {
+            this.totalDuration = calculateTotalDuration();
+        }
+        return totalDuration;
+    }
+
+    public void updateTotalDuration() {
+        this.totalDuration = calculateTotalDuration();
     }
 
     @Override
