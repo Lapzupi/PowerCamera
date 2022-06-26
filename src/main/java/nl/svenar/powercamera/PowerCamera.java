@@ -21,7 +21,7 @@ import nl.svenar.powercamera.listeners.OnMove;
 import org.spongepowered.configurate.ConfigurateException;
 
 public class PowerCamera extends JavaPlugin {
-	private String pluginChatPrefix = ChatColor.BLACK + "[" + ChatColor.AQUA + "%plugin_name%" + ChatColor.BLACK + "] ";
+	private final String pluginChatPrefix = ChatColor.BLACK + "[" + ChatColor.AQUA + getDescription().getName() + ChatColor.BLACK + "] ";
 
 	private CameraConfig camerasConfig;
 
@@ -31,9 +31,10 @@ public class PowerCamera extends JavaPlugin {
 	//These Should be in managers/caches
 	private PlayerManager playerManager;
 
-	public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
-	public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
-	public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	@Deprecated public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
+	@Deprecated public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	@Deprecated public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+
 	private final Instant startTime = Instant.now();
 
 	@Override
@@ -42,12 +43,12 @@ public class PowerCamera extends JavaPlugin {
 			this.pluginConfig = new PluginConfig(this);
 			this.cameraStorage = new CameraStorage(this);
 		} catch (ConfigurateException e){
-			getLogger().severe("Could not initialize camera.conf or config.conf");
-			getLogger().warning("Please fix any errors and reload the plugin.");
+			getLogger().severe(() -> "Could not initialize camera.conf or config.conf");
+			getLogger().warning(() -> "Please fix any errors and reload the plugin.");
 			e.printStackTrace();
 		}
 
-		pluginChatPrefix = pluginChatPrefix.replace("%plugin_name%", getDescription().getName());
+		this.playerManager = new PlayerManager();
 
 		Bukkit.getServer().getPluginManager().registerEvents(new OnMove(this), this);
 		Bukkit.getServer().getPluginManager().registerEvents(new OnJoin(this), this);
@@ -58,16 +59,15 @@ public class PowerCamera extends JavaPlugin {
 		commandManager.registerCommand(new PowerCameraCommand(this));
 
 		setupConfig();
-		
-		getLogger().info("Enabled " + getDescription().getName() + " v" + getDescription().getVersion());
 
+		getLogger().info(() -> "Enabled %s v%s".formatted(getDescription().getName(),getDescription().getVersion()));
 		@SuppressWarnings("unused")
 		Metrics metrics = new Metrics(this,9107);
 	}
 
 	@Override
 	public void onDisable() {
-		getLogger().info("Disabled " + getDescription().getName() + " v" + getDescription().getVersion());
+		getLogger().info(() -> "Disabled %s v%s".formatted(getDescription().getName(),getDescription().getVersion()));
 	}
 
 	public String getPluginChatPrefix() {
@@ -76,7 +76,6 @@ public class PowerCamera extends JavaPlugin {
 
 	private void setupConfig() {
 		camerasConfig = new CameraConfig(this);
-
 	}
 
 	public PluginConfig getConfigPlugin() {
