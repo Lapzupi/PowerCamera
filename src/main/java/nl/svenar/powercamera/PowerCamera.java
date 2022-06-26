@@ -14,7 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import nl.svenar.powercamera.config.CameraConfig;
 import nl.svenar.powercamera.config.PluginConfig;
 import nl.svenar.powercamera.listeners.OnJoin;
 import nl.svenar.powercamera.listeners.OnMove;
@@ -33,7 +32,7 @@ public class PowerCamera extends JavaPlugin {
 
 	@Deprecated public Map<UUID, String> player_selected_camera = new HashMap<>(); // Selected camera name
 	@Deprecated public Map<UUID, ViewingMode> player_camera_mode = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
-	@Deprecated public Map<UUID, CameraHandlerRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
+	@Deprecated public Map<UUID, CameraRunnable> player_camera_handler = new HashMap<>(); // When the player is viewing the camera (/pc start & /pc preview)
 
 	private final Instant startTime = Instant.now();
 

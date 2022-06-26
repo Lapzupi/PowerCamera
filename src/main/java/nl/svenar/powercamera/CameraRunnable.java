@@ -17,7 +17,7 @@ import org.bukkit.util.Vector;
 
 import nl.svenar.powercamera.model.ViewingMode;
 //todo
-public class CameraHandlerRunnable extends BukkitRunnable {
+public class CameraRunnable extends BukkitRunnable {
 
     private int ticks = 0;
 
@@ -27,29 +27,29 @@ public class CameraHandlerRunnable extends BukkitRunnable {
     //Camera Stuff
     private Camera camera;
 
-    private String camera_name;
+    private String cameraName;
     private ArrayList<Location> cameraPathPoints = new ArrayList<>();
     private HashMap<Integer, ArrayList<String>> cameraPathCommands = new HashMap<>();
 
     private PreviousState previousState;
 
-    public CameraHandlerRunnable(final PowerCamera plugin, final Player player, final Camera camera) {
+    public CameraRunnable(final PowerCamera plugin, final Player player, final Camera camera) {
         this.plugin = plugin;
         this.player = player;
         this.camera = camera;
 
-        this.camera_name = camera.getId();
+        this.cameraName = camera.getId();
     }
 
     private int calcMaxPoints(int duration, int singleFrameDurationMs) {
         return (duration * 1000) / singleFrameDurationMs;
     }
 
-    public CameraHandlerRunnable generatePath() {
+    public CameraRunnable generatePath() {
         int singleFrameDurationMs = 50;
-        int maxPoints = calcMaxPoints(this.plugin.getConfigCameras().getDuration(this.camera_name), singleFrameDurationMs);
+        int maxPoints = calcMaxPoints(this.camera.getTotalDuration().intValue(), singleFrameDurationMs);
 
-        List<String> rawCameraPoints = this.plugin.getConfigCameras().getPoints(this.camera_name);
+        List<String> rawCameraPoints = this.plugin.getConfigCameras().getPoints(this.cameraName);
         List<String> rawCameraMovePoints = getMovementPoints(rawCameraPoints);
 
         if (rawCameraMovePoints.size() - 1 == 0) {
@@ -132,7 +132,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
         return start + ((double) progress / (double) progressMax) * (end - start);
     }
 
-    public CameraHandlerRunnable start() {
+    public CameraRunnable start() {
         this.previousState = PreviousState.fromPlayer(player);
 
         if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
@@ -147,11 +147,11 @@ public class CameraHandlerRunnable extends BukkitRunnable {
         }
 
         if (!this.player.hasPermission("powercamera.hidestartmessages"))
-            this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera_name + "'!");
+            this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.cameraName + "'!");
         return this;
     }
 
-    public CameraHandlerRunnable stop() {
+    public CameraRunnable stop() {
         plugin.player_camera_mode.put(player.getUniqueId(), ViewingMode.NONE);
         try {
             this.cancel();
@@ -166,7 +166,7 @@ public class CameraHandlerRunnable extends BukkitRunnable {
             player.setInvisible(previousState.invisible());
 
         if (!this.player.hasPermission("powercamera.hidestartmessages"))
-            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + camera_name + "' has ended!");
+            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + cameraName + "' has ended!");
         return this;
     }
 
@@ -216,8 +216,8 @@ public class CameraHandlerRunnable extends BukkitRunnable {
 
     }
 
-    public CameraHandlerRunnable preview(Player player, int num, int previewTime) {
-        List<String> cameraPoints = plugin.getConfigCameras().getPoints(camera_name);
+    public CameraRunnable preview(Player player, int num, int previewTime) {
+        List<String> cameraPoints = plugin.getConfigCameras().getPoints(cameraName);
 
         if (num < 0)
             num = 0;

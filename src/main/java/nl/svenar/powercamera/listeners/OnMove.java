@@ -10,18 +10,17 @@ import nl.svenar.powercamera.PowerCamera;
 
 public class OnMove implements Listener {
 
-	private PowerCamera plugin;
+	private final PowerCamera plugin;
 
 	public OnMove(PowerCamera plugin) {
 		this.plugin = plugin;
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = false)
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if (plugin.player_camera_mode.get(e.getPlayer().getUniqueId()) != null) {
-			if (plugin.player_camera_mode.get(e.getPlayer().getUniqueId()) == ViewingMode.PREVIEW) {
-				e.setCancelled(true);
-			}
+		ViewingMode viewingMode = plugin.getPlayerManager().getViewingMode(e.getPlayer().getUniqueId());
+		if(viewingMode == ViewingMode.PREVIEW) {
+			e.setCancelled(true);
 		}
 	}
 }

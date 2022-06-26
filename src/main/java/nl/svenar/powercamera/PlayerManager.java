@@ -16,7 +16,7 @@ public class PlayerManager {
     private Map<UUID, String> selectedCamera;
     private Map<UUID, ViewingMode> currentViewingMode;
 
-    private Map<UUID, CameraHandlerRunnable> runningTasks;
+    private Map<UUID, CameraRunnable> runningTasks;
 
     public PlayerManager() {
         this.selectedCamera = new WeakHashMap<>();
@@ -26,7 +26,7 @@ public class PlayerManager {
 
     @Nullable
     //make the check before running this, perhaps we can make this optional, and check if present
-    public CameraHandlerRunnable getCurrentRunningCameraTask(final UUID uuid) {
+    public CameraRunnable getCurrentRunningCameraTask(final UUID uuid) {
         return runningTasks.getOrDefault(uuid,null);
     }
 
@@ -42,7 +42,7 @@ public class PlayerManager {
         currentViewingMode.put(uuid,mode);
     }
 
-    public void setRunningTask(final UUID uuid,final CameraHandlerRunnable runnable) {
+    public void setRunningTask(final UUID uuid,final CameraRunnable runnable) {
         this.runningTasks.put(uuid,runnable);
     }
     @Nullable

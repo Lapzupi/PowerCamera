@@ -9,7 +9,7 @@ import co.aikar.commands.annotation.HelpCommand;
 import co.aikar.commands.annotation.Optional;
 import co.aikar.commands.annotation.Subcommand;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import nl.svenar.powercamera.CameraHandlerRunnable;
+import nl.svenar.powercamera.CameraRunnable;
 import nl.svenar.powercamera.PlayerManager;
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
@@ -178,7 +178,7 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            playerManager.setRunningTask(sender.getUniqueId(),new CameraHandlerRunnable(plugin, sender, camera).generatePath().preview(sender,point,previewTime));
+            playerManager.setRunningTask(sender.getUniqueId(),new CameraRunnable(plugin, sender, camera).generatePath().preview(sender,point,previewTime));
         }
     }
 
@@ -235,7 +235,7 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            CameraHandlerRunnable runnable = new CameraHandlerRunnable(plugin, target.getPlayer(), camera);
+            CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
             plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.generatePath().start());
             return;
         }
@@ -245,7 +245,7 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
-        CameraHandlerRunnable runnable = new CameraHandlerRunnable(plugin, target.getPlayer(), camera);
+        CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
         plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.generatePath().start());
     }
 
@@ -258,7 +258,7 @@ public class PowerCameraCommand extends BaseCommand {
             return;
         }
 
-        CameraHandlerRunnable task = plugin.getPlayerManager().getCurrentRunningCameraTask(target.getPlayer().getUniqueId());
+        CameraRunnable task = plugin.getPlayerManager().getCurrentRunningCameraTask(target.getPlayer().getUniqueId());
         if (task != null && !task.isCancelled()) {
             task.stop();
         }
