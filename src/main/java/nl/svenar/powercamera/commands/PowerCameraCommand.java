@@ -41,7 +41,7 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("reload")
     @CommandPermission("powercamera.command.reload")
     public void onReload() {
-        for(Map.Entry<UUID, CameraRunnable> entry :plugin.getPlayerManager().getRunningTasks().entrySet()) {
+        for (Map.Entry<UUID, CameraRunnable> entry : plugin.getPlayerManager().getRunningTasks().entrySet()) {
             entry.getValue().stop();
         }
         this.plugin.getConfigPlugin().reloadConfig();
@@ -143,15 +143,15 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            if(num >= camera.getPoints().size()) {
-                player.sendMessage("%sPlease specify a number between 0-%d".formatted(plugin.getPluginChatPrefix()+ChatColor.RED,camera.getPoints().size()-1));
+            if (num >= camera.getPoints().size()) {
+                player.sendMessage("%sPlease specify a number between 0-%d".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, camera.getPoints().size() - 1));
                 return;
             }
 
             final CameraPoint cameraPoint = camera.getPoints().get(num);
             cameraPoint.setDuration(duration);
-            camera.getPoints().set(num,cameraPoint);
-            player.sendMessage("Set duration of camera %s @ point %d to %.2f".formatted(camera.getId(),num,duration));
+            camera.getPoints().set(num, cameraPoint);
+            player.sendMessage("Set duration of camera %s @ point %d to %.2f".formatted(camera.getId(), num, duration));
         }
     }
 
@@ -171,22 +171,27 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("preview")
     @CommandCompletion("@points")
     @CommandPermission("powercamera.command.preview")
-    public void onPreview(final Player sender, final int point, final int previewTime) {
+    public void onPreview(final @NotNull Player sender, final int point, final int previewTime) {
         if (!plugin.getPlayerManager().hasSelectedCamera(sender.getUniqueId())) {
             return;
         }
         final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(sender.getUniqueId());
 
         ViewingMode viewingMode = plugin.getPlayerManager().getViewingMode(sender.getUniqueId());
-        if(viewingMode == ViewingMode.NONE) {
-            final PlayerManager playerManager = plugin.getPlayerManager();
-            if(playerManager.hasRunningTask(sender.getUniqueId())) {
-                return;
-            }
-
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            playerManager.setRunningTask(sender.getUniqueId(),new CameraRunnable(plugin, sender, camera).preview(sender,point,previewTime));
+        if (viewingMode != ViewingMode.NONE) {
+            sender.sendMessage("Cannot start preview, current mode=" + viewingMode);
+            return;
         }
+
+        final PlayerManager playerManager = plugin.getPlayerManager();
+        if (playerManager.hasRunningTask(sender.getUniqueId())) {
+            sender.sendMessage("You already have a running task.");
+            return;
+        }
+
+        final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+        playerManager.setRunningTask(sender.getUniqueId(), new CameraRunnable(plugin, sender, camera).preview(sender, point, previewTime));
+
     }
 
     @Subcommand("info")
@@ -204,7 +209,7 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            sendInfoMessage(sender,camera);
+            sendInfoMessage(sender, camera);
             return;
         }
 
@@ -214,16 +219,16 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
-        sendInfoMessage(sender,camera);
+        sendInfoMessage(sender, camera);
     }
 
-    private void sendInfoMessage(final @NotNull Player sender, final @NotNull Camera camera){
+    private void sendInfoMessage(final @NotNull Player sender, final @NotNull Camera camera) {
         sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "----------" + ChatColor.AQUA + plugin.getDescription().getName() + ChatColor.DARK_AQUA + "----------" + ChatColor.BLUE + "===");
         sender.sendMessage(ChatColor.DARK_GREEN + "Camera name: " + ChatColor.GREEN + camera.getId());
         sender.sendMessage(ChatColor.DARK_GREEN + "Path duration: " + ChatColor.GREEN + camera.getTotalDuration() + " seconds");
         sender.sendMessage(ChatColor.DARK_GREEN + "Camera points (" + ChatColor.GREEN + camera.getPoints().size() + ChatColor.DARK_GREEN + "):");
 
-        for(int i=0;i<camera.getPoints().size()-1;i++) {
+        for (int i = 0; i < camera.getPoints().size() - 1; i++) {
             final String pointInfo = camera.getPoints().get(i).toString();
             sender.sendMessage(ChatColor.DARK_GREEN + "- " + ChatColor.GREEN + pointInfo);
         }
