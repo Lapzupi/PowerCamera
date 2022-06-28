@@ -10,6 +10,7 @@ import org.spongepowered.configurate.ConfigurateException;
 
 public class PluginConfig extends HoconConfigurateFile<PowerCamera> {
 	private int pointPreviewTime;
+	private int singleFrameDuration;
 	private Join join;
 	private CameraEffects cameraEffects;
 
@@ -66,6 +67,7 @@ public class PluginConfig extends HoconConfigurateFile<PowerCamera> {
 	@Override
 	protected void initValues() throws ConfigurateException {
 		this.pointPreviewTime = rootNode.node("point-preview-time").getInt();
+		this.singleFrameDuration = rootNode.node("single-frame-duration").getInt(60);
 
 		this.join = new Join();
 		this.join.setCameraId(rootNode.node("on-join").node("camera-id").getString());
@@ -92,5 +94,9 @@ public class PluginConfig extends HoconConfigurateFile<PowerCamera> {
 
 	public CameraEffects getCameraEffects() {
 		return cameraEffects;
+	}
+
+	public int getSingleFrameDuration() {
+		return singleFrameDuration;
 	}
 }
