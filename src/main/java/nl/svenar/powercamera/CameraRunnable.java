@@ -1,22 +1,19 @@
 package nl.svenar.powercamera;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import nl.svenar.powercamera.model.Camera;
+import nl.svenar.powercamera.model.CameraPoint;
 import nl.svenar.powercamera.model.PreviousState;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import nl.svenar.powercamera.model.ViewingMode;
-//todo
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 public class CameraRunnable extends BukkitRunnable {
 
     private int ticks = 0;
@@ -25,11 +22,9 @@ public class CameraRunnable extends BukkitRunnable {
     private final Player player;
 
     //Camera Stuff
-    private Camera camera;
+    private final Camera camera;
+    private final ArrayList<Location> locationsPaths;
 
-    private String cameraName;
-    private ArrayList<Location> cameraPathPoints = new ArrayList<>();
-    private HashMap<Integer, ArrayList<String>> cameraPathCommands = new HashMap<>();
 
     private PreviousState previousState;
 
@@ -38,81 +33,15 @@ public class CameraRunnable extends BukkitRunnable {
         this.player = player;
         this.camera = camera;
 
-        this.cameraName = camera.getId();
+
+        this.locationsPaths = generatePath();
     }
 
     private int calcMaxPoints(int duration, int singleFrameDurationMs) {
         return (duration * 1000) / singleFrameDurationMs;
     }
 
-    public CameraRunnable generatePath() {
-        int singleFrameDurationMs = 50;
-        int maxPoints = calcMaxPoints(this.camera.getTotalDuration().intValue(), singleFrameDurationMs);
-
-        List<String> rawCameraPoints = this.plugin.getConfigCameras().getPoints(this.cameraName);
-        List<String> rawCameraMovePoints = getMovementPoints(rawCameraPoints);
-
-        if (rawCameraMovePoints.size() - 1 == 0) {
-            for (int j = 0; j < maxPoints - 1; j++) {
-                this.cameraPathPoints.add(Util.deserializeLocation(rawCameraMovePoints.get(0).split(":", 2)[1]));
-            }
-        } else {
-            for (int i = 0; i < rawCameraMovePoints.size() - 1; i++) {
-                String raw_point = rawCameraMovePoints.get(i).split(":", 2)[1];
-                String raw_point_next = rawCameraMovePoints.get(i + 1).split(":", 2)[1];
-                String easing = rawCameraMovePoints.get(i + 1).split(":", 2)[0];
-
-                Location point = Util.deserializeLocation(raw_point);
-                Location point_next = Util.deserializeLocation(raw_point_next);
-
-                this.cameraPathPoints.add(point);
-                for (int j = 0; j < maxPoints / (rawCameraMovePoints.size() - 1) - 1; j++) {
-                    if (easing.equalsIgnoreCase("linear")) {
-                        this.cameraPathPoints.add(translateLinear(point, point_next, j, maxPoints / (rawCameraMovePoints.size() - 1) - 1));
-                    }
-                    if (easing.equalsIgnoreCase("teleport")) {
-                        this.cameraPathPoints.add(point_next);
-                    }
-                }
-            }
-        }
-
-        int commandIndex = 0;
-        for (String raw_point : rawCameraPoints) {
-            String type = raw_point.split(":", 3)[0];
-            //String easing = raw_point.split(":", 3)[1];
-            String data = raw_point.split(":", (Objects.equals(type, "location") ? 3 : 2))["location".equals(type) ? 2 : 1];
-
-            if (type.equalsIgnoreCase("location")) {
-                commandIndex += 1;
-            }
-
-            if (type.equalsIgnoreCase("command")) {
-                int index = ((commandIndex) * maxPoints / (rawCameraMovePoints.size()) - 1);
-                index = commandIndex == 0 ? 0 : index - 1;
-                index = Math.max(index, 0);
-                if (!this.cameraPathCommands.containsKey(index))
-                    this.cameraPathCommands.put(index, new ArrayList<>());
-                this.cameraPathCommands.get(index).add(data);
-            //this.camera_path_commands.put(index, raw_camera_points.get(0));
-            }
-        }
-
-        return this;
-    }
-
-    private List<String> getMovementPoints(List<String> rawCameraPoints) {
-        List<String> output = new ArrayList<>();
-        for (String raw_point : rawCameraPoints) {
-            String[] pointData = raw_point.split(":", 2);
-            if (pointData[0].equalsIgnoreCase("location")) {
-                output.add(pointData[1]);
-            }
-        }
-        return output;
-    }
-
-    private Location translateLinear(Location point, Location pointNext, int progress, int progressMax) {
+    private @NotNull Location translateLinearNext(@NotNull Location point, @NotNull Location pointNext, int progress, int progressMax) {
         if (!point.getWorld().getUID().toString().equals(pointNext.getWorld().getUID().toString())) {
             return pointNext;
         }
@@ -135,24 +64,24 @@ public class CameraRunnable extends BukkitRunnable {
     public CameraRunnable start() {
         this.previousState = PreviousState.fromPlayer(player);
 
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
             player.setGameMode(GameMode.SPECTATOR);
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
             player.setInvisible(true);
 
-        this.plugin.player_camera_mode.put(this.player.getUniqueId(), ViewingMode.VIEW);
+        this.plugin.getPlayerManager().setViewingMode(this.player.getUniqueId(), ViewingMode.VIEW);
         runTaskTimer(this.plugin, 1L, 1L);
-        if (!cameraPathPoints.isEmpty()) {
-            player.teleport(cameraPathPoints.get(0));
+        if (!locationsPaths.isEmpty()) {
+            player.teleport(locationsPaths.get(0));
         }
 
         if (!this.player.hasPermission("powercamera.hidestartmessages"))
-            this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.cameraName + "'!");
+            this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera.getId() + "'!");
         return this;
     }
 
     public CameraRunnable stop() {
-        plugin.player_camera_mode.put(player.getUniqueId(), ViewingMode.NONE);
+        this.plugin.getPlayerManager().setViewingMode(this.player.getUniqueId(), ViewingMode.VIEW);
         try {
             this.cancel();
         } catch (Exception e) {
@@ -160,39 +89,46 @@ public class CameraRunnable extends BukkitRunnable {
         }
 
         player.teleport(previousState.location());
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
             player.setGameMode(previousState.gameMode());
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
             player.setInvisible(previousState.invisible());
 
         if (!this.player.hasPermission("powercamera.hidestartmessages"))
-            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + cameraName + "' has ended!");
+            player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + this.camera.getId() + "' has ended!");
         return this;
     }
 
-    private Vector calculateVelocity(Location start, Location end) {
+    @Contract("_, _ -> new")
+    private @NotNull Vector calculateVelocity(@NotNull Location start, @NotNull Location end) {
         return new Vector(end.getX() - start.getX(), end.getY() - start.getY(), end.getZ() - start.getZ());
     }
 
     @Override
     public void run() {
-        ViewingMode playerViewingMode = plugin.player_camera_mode.get(player.getUniqueId());
+        ViewingMode playerViewingMode = plugin.getPlayerManager().getViewingMode(player.getUniqueId());
         switch (playerViewingMode) {
             case VIEW -> {
-                if (this.ticks > cameraPathPoints.size() - 2) {
+                if (this.ticks > locationsPaths.size() - 2) {
                     this.stop();
                     return;
                 }
 
-                Location currentPos = cameraPathPoints.get(this.ticks);
-                Location nextPoint = cameraPathPoints.get(this.ticks + 1);
+                Location currentPos = locationsPaths.get(this.ticks);
+                Location nextPoint = locationsPaths.get(this.ticks + 1);
 
-                player.teleport(cameraPathPoints.get(this.ticks));
+                player.teleport(locationsPaths.get(this.ticks));
 
-                if (cameraPathCommands.containsKey(this.ticks)) {
-                    for (String cmd : cameraPathCommands.get(this.ticks)) {
-                        String command = cmd.replace("%player%", player.getName());
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
+                final CameraPoint currentPoint = camera.getPoints().get(this.ticks);
+                if(!currentPoint.getCommandsStart().isEmpty()) {
+                    for(String command: currentPoint.getCommandsStart()) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
+                    }
+                }
+
+                if(!currentPoint.getCommandsEnd().isEmpty()) {
+                    for(String command: currentPoint.getCommandsStart()) {
+                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command.replace("%player%", player.getName()));
                     }
                 }
 
@@ -202,11 +138,11 @@ public class CameraRunnable extends BukkitRunnable {
             }
             case PREVIEW -> {
                 player.teleport(previousState.location());
-                if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+                if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
                     player.setGameMode(previousState.gameMode());
-                if (plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
+                if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
                     player.setInvisible(previousState.invisible());
-                plugin.player_camera_mode.put(player.getUniqueId(), ViewingMode.NONE);
+                plugin.getPlayerManager().setViewingMode(player.getUniqueId(),ViewingMode.NONE);
                 player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview ended!");
             }
             case NONE -> {
@@ -217,7 +153,7 @@ public class CameraRunnable extends BukkitRunnable {
     }
 
     public CameraRunnable preview(Player player, int num, int previewTime) {
-        List<String> cameraPoints = plugin.getConfigCameras().getPoints(cameraName);
+        List<CameraPoint> cameraPoints = camera.getPoints();
 
         if (num < 0)
             num = 0;
@@ -229,15 +165,17 @@ public class CameraRunnable extends BukkitRunnable {
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview started of point " + (num + 1) + "!");
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Ending in " + previewTime + " seconds.");
 
+
         this.previousState = PreviousState.fromPlayer(player);
-        Location point = Util.deserializeLocation(cameraPoints.get(num).split(":", 3)[2]);
+
+        final Location startingPoint = cameraPoints.get(0).getLocation();
 
         plugin.getPlayerManager().setViewingMode(player.getUniqueId(),ViewingMode.PREVIEW);
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.spectator-mode"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
             player.setGameMode(GameMode.SPECTATOR);
-        if (this.plugin.getConfigPlugin().getConfig().getBoolean("camera-effects.invisible"))
+        if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
             player.setInvisible(true);
-        player.teleport(point);
+        player.teleport(startingPoint);
 
         runTaskLater(this.plugin, previewTime * 20L);
         return this;
@@ -245,5 +183,32 @@ public class CameraRunnable extends BukkitRunnable {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    private @NotNull ArrayList<Location> generatePath() {
+        final ArrayList<Location> list = new ArrayList<>();
+        if(camera.getPoints().size() == 1)
+            list.add(camera.getPoints().get(0).getLocation());
+
+
+        int maxPoints = calcMaxPoints(camera.getTotalDuration().intValue(), 60);
+        for (int j = 0; j < maxPoints / (camera.getPoints().size() - 1) - 1; j++) {
+            CameraPoint currentPoint = camera.getPoints().get(j);
+            CameraPoint nextPoint = null;
+            if(j+1 != camera.getPoints().size())
+                nextPoint = camera.getPoints().get(j+1);
+
+            if (nextPoint == null) {
+                break;
+            }
+
+            if (nextPoint.getEasing() == CameraPoint.Easing.LINEAR) {
+                list.add(translateLinearNext(currentPoint.getLocation(),nextPoint.getLocation(),j,maxPoints / (camera.getPoints().size() - 1) - 1));
+            } else {
+                list.add(nextPoint.getLocation());
+            }
+        }
+
+        return list;
     }
 }

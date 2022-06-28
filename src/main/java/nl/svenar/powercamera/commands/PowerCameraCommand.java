@@ -2,12 +2,7 @@ package nl.svenar.powercamera.commands;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Description;
-import co.aikar.commands.annotation.HelpCommand;
-import co.aikar.commands.annotation.Optional;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import nl.svenar.powercamera.CameraRunnable;
 import nl.svenar.powercamera.PlayerManager;
@@ -25,7 +20,9 @@ import org.spongepowered.configurate.ConfigurateException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.TimeZone;
+import java.util.UUID;
 
 @CommandAlias("powercamera|pc|camera|pcam")
 public class PowerCameraCommand extends BaseCommand {
@@ -44,10 +41,11 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("reload")
     @CommandPermission("powercamera.command.reload")
     public void onReload() {
+        for(Map.Entry<UUID, CameraRunnable> entry :plugin.getPlayerManager().getRunningTasks().entrySet()) {
+            entry.getValue().stop();
+        }
         this.plugin.getConfigPlugin().reloadConfig();
-        this.plugin.getConfigCameras().reloadConfig();
-
-        //reload stuff here
+        this.plugin.getCameraStorage().reloadConfig();
     }
 
     @Subcommand("create")
@@ -59,7 +57,9 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         try {
-            plugin.getCameraStorage().createCamera(cameraId);
+            final Camera camera = plugin.getCameraStorage().createCamera(cameraId);
+            camera.addPoint(new CameraPoint(CameraPoint.Type.MOVE, CameraPoint.Easing.LINEAR, 60D, sender.getLocation()));
+            plugin.getCameraStorage().saveCamera(camera);
             sender.sendMessage("%sCamera '%s' created!".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, cameraId));
             onSelect(sender, cameraId);
         } catch (ConfigurateException e) {
@@ -68,6 +68,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
+    @CommandCompletion("@cameras")
     @CommandPermission("powercamera.command.remove")
     public void onRemove(final Player sender, final String cameraId) {
         if (!plugin.getCameraStorage().hasCamera(cameraId)) {
@@ -97,11 +98,14 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            camera.addPoint(new CameraPoint(type, easing, duration, player.getLocation()));
+            final CameraPoint cameraPoint = new CameraPoint(type, easing, duration, player.getLocation());
+            camera.addPoint(cameraPoint);
             plugin.getCameraStorage().saveCamera(camera);
+            player.sendMessage("%sAdded point '%s' to camera: '%s'".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, cameraPoint.toString(), camera.getId()));
         }
 
         @Subcommand("delete")
+        @CommandCompletion("@points")
         @CommandPermission("powercamera.command.point.delete")
         public void onDelete(final @NotNull Player player, final int num) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
@@ -123,6 +127,7 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         @Subcommand("duration|setduration")
+        @CommandCompletion("@points")
         @CommandPermission("powercamera.command.point.duration")
         public void onSetDuration(final @NotNull Player player, final int num, final Double duration) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
@@ -151,6 +156,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("select")
+    @CommandCompletion("@cameras")
     @CommandPermission("powercamera.command.select")
     public void onSelect(final Player sender, final String cameraId) {
         if (!plugin.getCameraStorage().hasCamera(cameraId)) {
@@ -163,6 +169,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("preview")
+    @CommandCompletion("@points")
     @CommandPermission("powercamera.command.preview")
     public void onPreview(final Player sender, final int point, final int previewTime) {
         if (!plugin.getPlayerManager().hasSelectedCamera(sender.getUniqueId())) {
@@ -178,11 +185,12 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            playerManager.setRunningTask(sender.getUniqueId(),new CameraRunnable(plugin, sender, camera).generatePath().preview(sender,point,previewTime));
+            playerManager.setRunningTask(sender.getUniqueId(),new CameraRunnable(plugin, sender, camera).preview(sender,point,previewTime));
         }
     }
 
     @Subcommand("info")
+    @CommandCompletion("@cameras")
     @Description("Display information on a selected camera, optionally specify a specific camera.")
     public void onInfo(final Player sender, @Optional final String cameraId) {
         if (cameraId == null) {
@@ -209,7 +217,7 @@ public class PowerCameraCommand extends BaseCommand {
         sendInfoMessage(sender,camera);
     }
 
-    private void sendInfoMessage(final Player sender, final Camera camera){
+    private void sendInfoMessage(final @NotNull Player sender, final @NotNull Camera camera){
         sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "----------" + ChatColor.AQUA + plugin.getDescription().getName() + ChatColor.DARK_AQUA + "----------" + ChatColor.BLUE + "===");
         sender.sendMessage(ChatColor.DARK_GREEN + "Camera name: " + ChatColor.GREEN + camera.getId());
         sender.sendMessage(ChatColor.DARK_GREEN + "Path duration: " + ChatColor.GREEN + camera.getTotalDuration() + " seconds");
@@ -222,6 +230,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("start")
+    @CommandCompletion("@players @cameras")
     @CommandPermission("powercamera.command.start")
     public void onStart(final Player sender, final OnlinePlayer target, @Optional final String cameraId) {
         if (cameraId == null) {
@@ -236,7 +245,7 @@ public class PowerCameraCommand extends BaseCommand {
 
             final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
             CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
-            plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.generatePath().start());
+            plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
             return;
         }
 
@@ -246,13 +255,13 @@ public class PowerCameraCommand extends BaseCommand {
 
         final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
         CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
-        plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.generatePath().start());
+        plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
     }
 
 
     @Subcommand("stop")
     @CommandPermission("powercamera.command.stop")
-    public void onStop(final Player sender, final OnlinePlayer target) {
+    public void onStop(final Player sender, final @NotNull OnlinePlayer target) {
         if (!plugin.getPlayerManager().hasRunningTask(target.getPlayer().getUniqueId())) {
             sender.sendMessage("%sPlayer %s does not have an active camera", plugin.getPluginChatPrefix() + ChatColor.RED, target.getPlayer().getName());
             return;
@@ -279,8 +288,7 @@ public class PowerCameraCommand extends BaseCommand {
         sender.sendMessage(ChatColor.DARK_GREEN + "Java version: " + ChatColor.GREEN + System.getProperty("java.version"));
         sender.sendMessage(ChatColor.DARK_GREEN + plugin.getDescription().getName() + " Version: " + ChatColor.GREEN + plugin.getDescription().getVersion());
         sender.sendMessage(ChatColor.DARK_GREEN + "Plugin uptime: " + ChatColor.GREEN + format.format(Duration.between(plugin.getStartTime(), currentTime).toMillis()));
-        sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getConfigCameras().getCameras().size());
-        sender.sendMessage(ChatColor.DARK_GREEN + "Registered players: " + ChatColor.GREEN + plugin.getConfigCameras().getPlayers().size());
+        sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getCameraStorage().getTotalAmountCameras());
         sender.sendMessage(ChatColor.DARK_GREEN + "Invisibility mode: " + ChatColor.GREEN + invisibilityMode);
         sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "-------------------------------" + ChatColor.BLUE + "===");
     }

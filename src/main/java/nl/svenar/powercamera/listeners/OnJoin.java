@@ -38,6 +38,6 @@ public class OnJoin implements Listener {
         }
 
         final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
-        this.plugin.getPlayerManager().setRunningTask(player.getUniqueId(),new CameraRunnable(plugin, player, camera).generatePath().start());
+        this.plugin.getPlayerManager().setRunningTask(player.getUniqueId(),new CameraRunnable(plugin, player, camera).start());
     }
 }

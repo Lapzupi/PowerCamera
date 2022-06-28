@@ -21,19 +21,23 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author sarhatabaot
  */
 public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
     private Map<String, Camera> cameras;
-
+    private final CommentedConfigurationNode cameraNode;
     public CameraStorage(@NotNull final PowerCamera plugin) throws ConfigurateException {
         super(plugin, "", "cameras.conf", "");
+
+        this.cameraNode = rootNode.node("cameras");
     }
 
     @Override
     protected void initValues() throws ConfigurateException {
+        plugin.getLogger().info("InitValues");
         this.cameras = new HashMap<>();
 
         final CommentedConfigurationNode camerasNode = rootNode.node("cameras");
@@ -42,6 +46,10 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
             final Camera camera = entry.getValue().get(Camera.class);
             this.cameras.put(cameraId,camera);
         }
+    }
+
+    public int getTotalAmountCameras() {
+        return cameras.size();
     }
 
     @Override
@@ -67,31 +75,50 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
      * @return Camera object
      */
     public Camera getRawCamera(final String id) throws SerializationException {
-        return rootNode.node("camera").node(id).get(Camera.class);
+        return cameraNode.node("camera").node(id).get(Camera.class);
     }
 
     public boolean hasCamera(final String id) {
         return cameras.containsKey(id);
     }
 
-    //todo
-    public void createCamera(final String id) throws ConfigurateException {
-
+    public Camera createCamera(final String id) throws ConfigurateException {
+        final Camera camera = new Camera(id);
+        saveCamera(camera);
+        return camera;
     }
 
     public void deleteCamera(final String id) {
+        if(!hasCamera(id)) {
+            // no such camera
+            return;
+        }
 
+        rootNode.removeChild(id);
+        try {
+            loader.save(rootNode);
+        } catch (ConfigurateException e){
+            //
+        }
+
+        reloadConfig();
     }
 
     public void saveCamera(final @NotNull Camera camera) {
         final String cameraId = camera.getId();
         try {
-            rootNode.node(cameraId).set(camera);
+            cameraNode.node(cameraId).set(camera);
             loader.save(rootNode);
+            reloadConfig();
         } catch (ConfigurateException e) {
             //
         }
     }
+
+    public Set<String> getCameraIds(){
+        return cameras.keySet();
+    }
+
 
 
     public static class CameraSerializer implements TypeSerializer<Camera> {

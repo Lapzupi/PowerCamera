@@ -13,10 +13,10 @@ import java.util.WeakHashMap;
  * @author sarhatabaot
  */
 public class PlayerManager {
-    private Map<UUID, String> selectedCamera;
-    private Map<UUID, ViewingMode> currentViewingMode;
+    private final Map<UUID, String> selectedCamera;
+    private final Map<UUID, ViewingMode> currentViewingMode;
 
-    private Map<UUID, CameraRunnable> runningTasks;
+    private final Map<UUID, CameraRunnable> runningTasks;
 
     public PlayerManager() {
         this.selectedCamera = new WeakHashMap<>();
@@ -58,4 +58,7 @@ public class PlayerManager {
         selectedCamera.put(uuid,cameraId);
     }
 
+    public Map<UUID, CameraRunnable> getRunningTasks() {
+        return runningTasks;
+    }
 }
