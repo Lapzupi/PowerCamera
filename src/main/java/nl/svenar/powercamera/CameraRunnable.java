@@ -1,6 +1,7 @@
 package nl.svenar.powercamera;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
@@ -23,7 +24,7 @@ public class CameraRunnable extends BukkitRunnable {
 
     //Camera Stuff
     private final Camera camera;
-    private final ArrayList<Location> locationsPaths;
+    private ArrayList<Location> locationsPaths;
 
     private int currentCameraPointPosition = 0;
 
@@ -36,7 +37,7 @@ public class CameraRunnable extends BukkitRunnable {
         this.camera = camera;
 
 
-        this.locationsPaths = generatePath();
+        this.locationsPaths = generatePath(camera.getPoints());
     }
 
     //Calculate the maximum amount of points between 2 points in duration
@@ -84,7 +85,7 @@ public class CameraRunnable extends BukkitRunnable {
         return this;
     }
 
-    public CameraRunnable stop() {
+    public void stop() {
         this.plugin.getPlayerManager().setViewingMode(this.player.getUniqueId(), ViewingMode.VIEW);
         try {
             this.cancel();
@@ -102,7 +103,6 @@ public class CameraRunnable extends BukkitRunnable {
             player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + this.camera.getId() + "' has ended!");
 
         currentCameraPointPosition = 0;
-        return this;
     }
 
     @Contract("_, _ -> new")
@@ -160,9 +160,14 @@ public class CameraRunnable extends BukkitRunnable {
         }
 
     }
-
+    private double calcPointPortionOfTotalDuration(double duration, double total) {
+        return duration / total;
+    }
     public CameraRunnable preview(Player player, int num, int previewTime) {
-        List<CameraPoint> cameraPoints = camera.getPoints();
+        List<CameraPoint> cameraPoints = new ArrayList<>(camera.getPoints());
+        cameraPoints.forEach(cameraPoint -> cameraPoint.setDuration(calcPointPortionOfTotalDuration(cameraPoint.getDuration(),camera.getTotalDuration()) * previewTime));
+
+        this.locationsPaths = generatePath(cameraPoints);
         currentCameraPointPosition = num;
 
         if (num < 0)
@@ -174,7 +179,7 @@ public class CameraRunnable extends BukkitRunnable {
 
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview started of point " + num  + "!");
         player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Ending in " + previewTime + " seconds.");
-
+        player.sendMessage(cameraPoints.stream().map(CameraPoint::toString).collect(Collectors.joining(",")));
 
         this.previousState = PreviousState.fromPlayer(player);
 
@@ -195,15 +200,15 @@ public class CameraRunnable extends BukkitRunnable {
         return camera;
     }
 
-    private @NotNull ArrayList<Location> generatePath() {
+    private @NotNull ArrayList<Location> generatePath(List<CameraPoint> points) {
         final ArrayList<Location> list = new ArrayList<>();
         final int singleFrameDuration = plugin.getConfigPlugin().getSingleFrameDuration();
-        if (camera.getPoints().size() == 1)
-            list.add(camera.getPoints().get(0).getLocation());
+        if (points.size() == 1)
+            list.add(points.get(0).getLocation());
 
-        for (int i = 0; i < camera.getPoints().size() - 1; i++) {
-            CameraPoint currentPoint = camera.getPoints().get(i);
-            CameraPoint nextPoint = camera.getPoints().get(i + 1);
+        for (int i = 0; i < points.size() - 1; i++) {
+            CameraPoint currentPoint = points.get(i);
+            CameraPoint nextPoint = points.get(i + 1);
 
             int maxSubPoints = calcMaxPoints(nextPoint.getDuration().intValue(), singleFrameDuration);
             for (int cursor = 0; cursor <= maxSubPoints; cursor++) {

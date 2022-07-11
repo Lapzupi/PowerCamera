@@ -1,9 +1,5 @@
 package nl.svenar.powercamera.listeners;
 
-import java.util.List;
-import java.util.Random;
-
-import nl.svenar.powercamera.Util;
 import nl.svenar.powercamera.model.Camera;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

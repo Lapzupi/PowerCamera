@@ -17,7 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<compiler.plugin.version>3.10.1</compiler.plugin.version>
 		<shade.plugin.version>3.3.0</shade.plugin.version>
-		<spigot.api.version>1.18.2-R0.1-SNAPSHOT</spigot.api.version>
+		<spigot.api.version>1.19-R0.1-SNAPSHOT</spigot.api.version>
 		<bstats.version>3.0.0</bstats.version>
 		<acf.version>0.5.1-SNAPSHOT</acf.version>
 		<kraken.core.version>1.4.2</kraken.core.version>

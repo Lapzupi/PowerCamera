@@ -82,6 +82,26 @@ public class PowerCameraCommand extends BaseCommand {
 
     @Subcommand("point")
     public class PointSubCommand extends BaseCommand {
+        @Subcommand("tp")
+        @CommandPermission("powercamera.command.point.add")
+        public void onTeleport(final @NotNull Player player, final int num) {
+            if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
+                player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));
+                return;
+            }
+
+            final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(player.getUniqueId());
+            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+                //mismatched ids, please restart your server
+                plugin.getLogger().severe("Mismatched ids. Something went wrong. Please restart your server.");
+                return;
+            }
+
+            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+            final CameraPoint cameraPoint = camera.getPoints().get(num);
+            player.teleport(cameraPoint.getLocation());
+            player.sendMessage("Teleported to point %d @ %s".formatted(num,cameraPoint.getLocation().toString()));
+        }
 
         @Subcommand("add")
         @CommandPermission("powercamera.command.point.add")
