@@ -1,8 +1,9 @@
-package nl.svenar.powercamera.config;
+package nl.svenar.powercamera.storage.configurate;
 
 import com.github.sarhatabaot.kraken.core.config.JsonConfigurateFile;
 import com.github.sarhatabaot.kraken.core.config.Transformation;
 import nl.svenar.powercamera.PowerCamera;
+import nl.svenar.powercamera.storage.PlayerStorage;
 import org.jetbrains.annotations.NotNull;
 
 import org.spongepowered.configurate.BasicConfigurationNode;
@@ -11,14 +12,16 @@ import org.spongepowered.configurate.ConfigurateException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Future;
 
 /**
  * @author sarhatabaot TODO
  */
-public class PlayersStorage extends JsonConfigurateFile<PowerCamera> {
+public class PlayersConfigurate extends JsonConfigurateFile<PowerCamera> implements PlayerStorage {
     private Map<String, List<String>> cameraPlayedMap;
 
-    protected PlayersStorage(@NotNull final PowerCamera plugin) throws ConfigurateException {
+    protected PlayersConfigurate(@NotNull final PowerCamera plugin) throws ConfigurateException {
         super(plugin, "", "players.json", "");
     }
 
@@ -42,14 +45,15 @@ public class PlayersStorage extends JsonConfigurateFile<PowerCamera> {
         return null;
     }
 
-    public boolean hasPlayed(final String uuid, final String cameraId){
-        return cameraPlayedMap.get(cameraId).contains(uuid);
+    public CompletableFuture<Boolean> hasPlayed(final String uuid, final String cameraId){
+        return CompletableFuture.completedFuture(cameraPlayedMap.get(cameraId).contains(uuid));
     }
 
-    public void addPlayer(final String uuid, final String cameraId) {
-        if(this.cameraPlayedMap.get(cameraId).contains(uuid))
-            return;
+    public CompletableFuture<Void> addPlayer(final String uuid, final String cameraId) {
+        if(!this.cameraPlayedMap.get(cameraId).contains(uuid)) {
+            this.cameraPlayedMap.get(cameraId).add(uuid);
+        }
 
-        this.cameraPlayedMap.get(cameraId).add(uuid);
+        return null;
     }
 }

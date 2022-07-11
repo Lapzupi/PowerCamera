@@ -1,10 +1,12 @@
-package nl.svenar.powercamera.config;
+package nl.svenar.powercamera.storage.configurate;
 
 import com.github.sarhatabaot.kraken.core.config.HoconConfigurateFile;
 import com.github.sarhatabaot.kraken.core.config.Transformation;
+import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
+import nl.svenar.powercamera.storage.CameraStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,14 +24,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author sarhatabaot
  */
-public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
+public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> implements CameraStorage {
     private Map<String, Camera> cameras;
     private final CommentedConfigurationNode cameraNode;
-    public CameraStorage(@NotNull final PowerCamera plugin) throws ConfigurateException {
+    public CameraConfigurate(@NotNull final PowerCamera plugin) throws ConfigurateException {
         super(plugin, "", "cameras.conf", "");
 
         this.cameraNode = rootNode.node("cameras");
@@ -37,7 +40,6 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
 
     @Override
     protected void initValues() throws ConfigurateException {
-        plugin.getLogger().info("InitValues");
         this.cameras = new HashMap<>();
 
         final CommentedConfigurationNode camerasNode = rootNode.node("cameras");
@@ -48,8 +50,8 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
         }
     }
 
-    public int getTotalAmountCameras() {
-        return cameras.size();
+    public CompletableFuture<Integer> getTotalAmountCameras() {
+        return CompletableFuture.completedFuture(cameras.size());
     }
 
     @Override
@@ -65,8 +67,8 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
         return null;
     }
 
-    public Camera getCamera(final String id) {
-        return cameras.get(id);
+    public CompletableFuture<Camera> getCamera(final String id) {
+        return CompletableFuture.completedFuture(cameras.get(id));
     }
 
     /**
@@ -78,25 +80,36 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
         return cameraNode.node("camera").node(id).get(Camera.class);
     }
 
-    public boolean hasCamera(final String id) {
-        return cameras.containsKey(id);
+    public CompletableFuture<Boolean> hasCamera(final String id) {
+        return CompletableFuture.completedFuture(cameras.containsKey(id));
     }
 
-    public Camera createCamera(final String id) throws ConfigurateException {
+    @Override
+    public CompletableFuture<CameraPoint> getCameraPoint(final String cameraId, final int num) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Boolean> hasCameraPoint(final String cameraId, final int num) {
+        return null;
+    }
+
+    public CompletableFuture<Camera> createCamera(final String id){
         final Camera camera = new Camera(id);
         saveCamera(camera);
-        return camera;
+        return CompletableFuture.completedFuture(camera);
     }
 
-    public void deleteCamera(final String id) {
-        if(!hasCamera(id)) {
+    public CompletableFuture<Void> deleteCamera(final String id) {
+        if(!hasCamera(id).get()) {
             // no such camera
-            return;
+            return null;
         }
 
         rootNode.removeChild(id);
         try {
             loader.save(rootNode);
+            reloadConfig();
         } catch (ConfigurateException e){
             //
         }
@@ -111,12 +124,12 @@ public class CameraStorage extends HoconConfigurateFile<PowerCamera> {
             loader.save(rootNode);
             reloadConfig();
         } catch (ConfigurateException e) {
-            //
+            LoggerUtil.logSevereException(e);
         }
     }
 
-    public Set<String> getCameraIds(){
-        return cameras.keySet();
+    public CompletableFuture<Set<String>> getCameraIds(){
+        return CompletableFuture.completedFuture(cameras.keySet());
     }
 
 
