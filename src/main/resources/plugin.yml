@@ -5,11 +5,11 @@ api-version: 1.18
 description: ${project.description}
 authors: [svenar_nl]
 website: ${project.url}
-permissions:
-    powercamera.hidestartmessages:
-        default: not op
-    powercamera.bypass.joincamera:
-        default: false
 libraries:
     - org.spongepowered:configurate-hocon:${configurate.version}
     - org.spongepowered:configurate-gson:${configurate.version}
+    - org.xerial:sqlite-jdbc:${sqlite.jdbc.version}
+    - com.zaxxer:HikariCP:${hikaricp.version}
+    - org.jooq:jooq:${jooq.version}
+    - org.jooq:jooq-meta:${jooq.version}
+    - org.flywaydb:flyway-mysql:${flyway.version}
