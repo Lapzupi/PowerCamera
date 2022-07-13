@@ -44,7 +44,7 @@ public class CameraManager {
     }
 
     public void createCamera(final String cameraId) {
-
+        this.cameraStorage.createCamera(cameraId);
     }
 
     public Camera getCamera(final String id) {

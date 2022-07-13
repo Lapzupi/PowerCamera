@@ -9,8 +9,9 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author sarhatabaot
  */
+//todo
 public class PlayerSql implements PlayerStorage {
-    private ConnectionFactory<PowerCamera> connectionFactory;
+    private final ConnectionFactory<PowerCamera> connectionFactory;
 
     public PlayerSql(final ConnectionFactory<PowerCamera> connectionFactory) {
         this.connectionFactory = connectionFactory;

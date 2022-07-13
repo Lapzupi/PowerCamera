@@ -10,11 +10,10 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import nl.svenar.powercamera.CameraRunnable;
 import nl.svenar.powercamera.PowerCamera;
 
-public class OnJoin implements Listener {
-
+public class JoinListener implements Listener {
     private final PowerCamera plugin;
 
-    public OnJoin(PowerCamera plugin) {
+    public JoinListener(PowerCamera plugin) {
         this.plugin = plugin;
     }
 

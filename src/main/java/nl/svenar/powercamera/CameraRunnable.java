@@ -31,7 +31,7 @@ public class CameraRunnable extends BukkitRunnable {
 
     private PreviousState previousState;
 
-    public CameraRunnable(final PowerCamera plugin, final Player player, final Camera camera) {
+    public CameraRunnable(final PowerCamera plugin, final Player player, final @NotNull Camera camera) {
         this.plugin = plugin;
         this.player = player;
         this.camera = camera;
@@ -200,7 +200,7 @@ public class CameraRunnable extends BukkitRunnable {
         return camera;
     }
 
-    private @NotNull ArrayList<Location> generatePath(List<CameraPoint> points) {
+    private @NotNull ArrayList<Location> generatePath(@NotNull List<CameraPoint> points) {
         final ArrayList<Location> list = new ArrayList<>();
         final int singleFrameDuration = plugin.getConfigPlugin().getSingleFrameDuration();
         if (points.size() == 1)

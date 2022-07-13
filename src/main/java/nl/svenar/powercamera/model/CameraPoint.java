@@ -15,8 +15,8 @@ public class CameraPoint {
     private Easing easing; //linear, none, ...?
     private Double duration;
     private Location location;
-    private List<String> commandsStart;
-    private List<String> commandsEnd;
+    private final List<String> commandsStart;
+    private final List<String> commandsEnd;
 
     public CameraPoint(final String cameraId, final Type type, final Easing easing, final Double duration, final Location location, final List<String> commandsStart, final List<String> commandsEnd) {
         this.cameraId = cameraId;
@@ -63,10 +63,10 @@ public class CameraPoint {
     }
 
     public enum Easing {
-        LINEAR, NONE;
+        LINEAR, NONE
     }
     public enum Type {
-        MOVE, TELEPORT, NONE;
+        MOVE, TELEPORT, NONE
     }
 
     public void setType(final Type type) {

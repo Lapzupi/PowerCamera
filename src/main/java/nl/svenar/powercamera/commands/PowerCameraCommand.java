@@ -15,7 +15,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.configurate.ConfigurateException;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -23,7 +22,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 @CommandAlias("powercamera|pc|camera|pcam")
 public class PowerCameraCommand extends BaseCommand {

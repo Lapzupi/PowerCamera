@@ -23,8 +23,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nl.svenar.powercamera.config.PluginConfig;
-import nl.svenar.powercamera.listeners.OnJoin;
-import nl.svenar.powercamera.listeners.OnMove;
+import nl.svenar.powercamera.listeners.JoinListener;
+import nl.svenar.powercamera.listeners.MoveListener;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -69,8 +69,8 @@ public class PowerCamera extends JavaPlugin {
 
     private void registerListeners() {
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
-        pluginManager.registerEvents(new OnMove(this), this);
-        pluginManager.registerEvents(new OnJoin(this), this);
+        pluginManager.registerEvents(new MoveListener(this), this);
+        pluginManager.registerEvents(new JoinListener(this), this);
     }
 
     private void initCommands() {

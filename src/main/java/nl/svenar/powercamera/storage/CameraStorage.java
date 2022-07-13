@@ -3,7 +3,6 @@ package nl.svenar.powercamera.storage;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -11,6 +10,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * @author sarhatabaot
  */
+@SuppressWarnings("UnusedReturnValue")
 public interface CameraStorage {
 
     CompletableFuture<Camera> getCamera(final String cameraId);

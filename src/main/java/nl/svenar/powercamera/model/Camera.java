@@ -2,7 +2,6 @@ package nl.svenar.powercamera.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Camera {
     private final String id;
