@@ -37,7 +37,7 @@ public class PowercameraCameras extends TableImpl<PowercameraCamerasRecord> {
     private static final long serialVersionUID = 1L;
 
     /**
-     * The reference instance of <code>powercamera_cameras</code>
+     * The reference instance of <code>POWERCAMERA_CAMERAS</code>
      */
     public static final PowercameraCameras POWERCAMERA_CAMERAS = new PowercameraCameras();
 
@@ -50,22 +50,22 @@ public class PowercameraCameras extends TableImpl<PowercameraCamerasRecord> {
     }
 
     /**
-     * The column <code>powercamera_cameras.ID</code>.
+     * The column <code>POWERCAMERA_CAMERAS.ID</code>.
      */
     public final TableField<PowercameraCamerasRecord, String> ID = createField(DSL.name("ID"), SQLDataType.VARCHAR(15).nullable(false), this, "");
 
     /**
-     * The column <code>powercamera_cameras.ALIAS</code>.
+     * The column <code>POWERCAMERA_CAMERAS.ALIAS</code>.
      */
     public final TableField<PowercameraCamerasRecord, String> ALIAS = createField(DSL.name("ALIAS"), SQLDataType.VARCHAR(30).nullable(false), this, "");
 
     /**
-     * The column <code>powercamera_cameras.TOTAL_DURATION</code>.
+     * The column <code>POWERCAMERA_CAMERAS.TOTAL_DURATION</code>.
      */
     public final TableField<PowercameraCamerasRecord, Double> TOTAL_DURATION = createField(DSL.name("TOTAL_DURATION"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     /**
-     * The column <code>powercamera_cameras.RETURN_TO_ORIGIN</code>.
+     * The column <code>POWERCAMERA_CAMERAS.RETURN_TO_ORIGIN</code>.
      */
     public final TableField<PowercameraCamerasRecord, Boolean> RETURN_TO_ORIGIN = createField(DSL.name("RETURN_TO_ORIGIN"), SQLDataType.BOOLEAN.nullable(false).defaultValue(DSL.field("1", SQLDataType.BOOLEAN)), this, "");
 
@@ -78,24 +78,24 @@ public class PowercameraCameras extends TableImpl<PowercameraCamerasRecord> {
     }
 
     /**
-     * Create an aliased <code>powercamera_cameras</code> table reference
+     * Create an aliased <code>POWERCAMERA_CAMERAS</code> table reference
      */
     public PowercameraCameras(String alias) {
         this(DSL.name(alias), POWERCAMERA_CAMERAS);
     }
 
     /**
-     * Create an aliased <code>powercamera_cameras</code> table reference
+     * Create an aliased <code>POWERCAMERA_CAMERAS</code> table reference
      */
     public PowercameraCameras(Name alias) {
         this(alias, POWERCAMERA_CAMERAS);
     }
 
     /**
-     * Create a <code>powercamera_cameras</code> table reference
+     * Create a <code>POWERCAMERA_CAMERAS</code> table reference
      */
     public PowercameraCameras() {
-        this(DSL.name("powercamera_cameras"), null);
+        this(DSL.name("POWERCAMERA_CAMERAS"), null);
     }
 
     public <O extends Record> PowercameraCameras(Table<O> child, ForeignKey<O, PowercameraCamerasRecord> key) {
@@ -109,7 +109,7 @@ public class PowercameraCameras extends TableImpl<PowercameraCamerasRecord> {
 
     @Override
     public UniqueKey<PowercameraCamerasRecord> getPrimaryKey() {
-        return Keys.CONSTRAINT_1;
+        return Keys.CONSTRAINT_C;
     }
 
     @Override

@@ -22,56 +22,56 @@ public class PowercameraCamerasRecord extends UpdatableRecordImpl<PowercameraCam
     private static final long serialVersionUID = 1L;
 
     /**
-     * Setter for <code>powercamera_cameras.ID</code>.
+     * Setter for <code>POWERCAMERA_CAMERAS.ID</code>.
      */
     public void setId(String value) {
         set(0, value);
     }
 
     /**
-     * Getter for <code>powercamera_cameras.ID</code>.
+     * Getter for <code>POWERCAMERA_CAMERAS.ID</code>.
      */
     public String getId() {
         return (String) get(0);
     }
 
     /**
-     * Setter for <code>powercamera_cameras.ALIAS</code>.
+     * Setter for <code>POWERCAMERA_CAMERAS.ALIAS</code>.
      */
     public void setAlias(String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>powercamera_cameras.ALIAS</code>.
+     * Getter for <code>POWERCAMERA_CAMERAS.ALIAS</code>.
      */
     public String getAlias() {
         return (String) get(1);
     }
 
     /**
-     * Setter for <code>powercamera_cameras.TOTAL_DURATION</code>.
+     * Setter for <code>POWERCAMERA_CAMERAS.TOTAL_DURATION</code>.
      */
     public void setTotalDuration(Double value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>powercamera_cameras.TOTAL_DURATION</code>.
+     * Getter for <code>POWERCAMERA_CAMERAS.TOTAL_DURATION</code>.
      */
     public Double getTotalDuration() {
         return (Double) get(2);
     }
 
     /**
-     * Setter for <code>powercamera_cameras.RETURN_TO_ORIGIN</code>.
+     * Setter for <code>POWERCAMERA_CAMERAS.RETURN_TO_ORIGIN</code>.
      */
     public void setReturnToOrigin(Boolean value) {
         set(3, value);
     }
 
     /**
-     * Getter for <code>powercamera_cameras.RETURN_TO_ORIGIN</code>.
+     * Getter for <code>POWERCAMERA_CAMERAS.RETURN_TO_ORIGIN</code>.
      */
     public Boolean getReturnToOrigin() {
         return (Boolean) get(3);

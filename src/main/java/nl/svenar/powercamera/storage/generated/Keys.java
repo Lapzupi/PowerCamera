@@ -5,9 +5,13 @@ package nl.svenar.powercamera.storage.generated;
 
 
 import nl.svenar.powercamera.storage.generated.tables.PowercameraCameras;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsEnd;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsStart;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPlayers;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPoints;
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraCamerasRecord;
+import nl.svenar.powercamera.storage.generated.tables.records.PowercameraCommandsEndRecord;
+import nl.svenar.powercamera.storage.generated.tables.records.PowercameraCommandsStartRecord;
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraPlayersRecord;
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraPointsRecord;
 
@@ -28,7 +32,9 @@ public class Keys {
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
-    public static final UniqueKey<PowercameraCamerasRecord> CONSTRAINT_1 = Internal.createUniqueKey(PowercameraCameras.POWERCAMERA_CAMERAS, DSL.name("CONSTRAINT_1"), new TableField[] { PowercameraCameras.POWERCAMERA_CAMERAS.ID }, true);
-    public static final UniqueKey<PowercameraPlayersRecord> CONSTRAINT_D = Internal.createUniqueKey(PowercameraPlayers.POWERCAMERA_PLAYERS, DSL.name("CONSTRAINT_D"), new TableField[] { PowercameraPlayers.POWERCAMERA_PLAYERS.ID }, true);
+    public static final UniqueKey<PowercameraCamerasRecord> CONSTRAINT_C = Internal.createUniqueKey(PowercameraCameras.POWERCAMERA_CAMERAS, DSL.name("CONSTRAINT_C"), new TableField[] { PowercameraCameras.POWERCAMERA_CAMERAS.ID }, true);
+    public static final UniqueKey<PowercameraCommandsEndRecord> CONSTRAINT_6 = Internal.createUniqueKey(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END, DSL.name("CONSTRAINT_6"), new TableField[] { PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END.ID }, true);
+    public static final UniqueKey<PowercameraCommandsStartRecord> CONSTRAINT_E = Internal.createUniqueKey(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START, DSL.name("CONSTRAINT_E"), new TableField[] { PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.ID }, true);
+    public static final UniqueKey<PowercameraPlayersRecord> CONSTRAINT_8 = Internal.createUniqueKey(PowercameraPlayers.POWERCAMERA_PLAYERS, DSL.name("CONSTRAINT_8"), new TableField[] { PowercameraPlayers.POWERCAMERA_PLAYERS.ID }, true);
     public static final UniqueKey<PowercameraPointsRecord> CONSTRAINT_9 = Internal.createUniqueKey(PowercameraPoints.POWERCAMERA_POINTS, DSL.name("CONSTRAINT_9"), new TableField[] { PowercameraPoints.POWERCAMERA_POINTS.NUM }, true);
 }

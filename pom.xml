@@ -20,7 +20,7 @@
         <spigot.api.version>1.19-R0.1-SNAPSHOT</spigot.api.version>
         <bstats.version>3.0.0</bstats.version>
         <acf.version>0.5.1-SNAPSHOT</acf.version>
-        <kraken.core.version>1.4.2</kraken.core.version>
+        <kraken.core.version>1.5.0</kraken.core.version>
         <configurate.version>4.1.2</configurate.version>
         <sqlite.jdbc.version>3.36.0.3</sqlite.jdbc.version>
         <hikaricp.version>5.0.1</hikaricp.version>
@@ -177,7 +177,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.sarhatabaot</groupId>
-            <artifactId>KrakenCore</artifactId>
+            <artifactId>Kraken-Core</artifactId>
             <version>${kraken.core.version}</version>
             <scope>compile</scope>
         </dependency>

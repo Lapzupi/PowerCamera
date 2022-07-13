@@ -20,10 +20,11 @@ public class Camera {
         this.points = new ArrayList<>();
     }
 
-    public Camera(final String id, final String alias, final List<CameraPoint> points, final boolean returnToOrigin) {
+    public Camera(final String id, final String alias, final List<CameraPoint> points, final Double totalDuration, final boolean returnToOrigin) {
         this.id = id;
         this.alias = alias;
         this.points = points;
+        this.totalDuration = totalDuration;
         this.returnToOrigin = returnToOrigin;
     }
 

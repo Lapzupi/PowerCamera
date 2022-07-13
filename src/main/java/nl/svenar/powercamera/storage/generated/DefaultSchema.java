@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import nl.svenar.powercamera.storage.generated.tables.PowercameraCameras;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsEnd;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsStart;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPlayers;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPoints;
 
@@ -30,17 +32,27 @@ public class DefaultSchema extends SchemaImpl {
     public static final DefaultSchema DEFAULT_SCHEMA = new DefaultSchema();
 
     /**
-     * The table <code>powercamera_cameras</code>.
+     * The table <code>POWERCAMERA_CAMERAS</code>.
      */
     public final PowercameraCameras POWERCAMERA_CAMERAS = PowercameraCameras.POWERCAMERA_CAMERAS;
 
     /**
-     * The table <code>powercamera_players</code>.
+     * The table <code>POWERCAMERA_COMMANDS_END</code>.
+     */
+    public final PowercameraCommandsEnd POWERCAMERA_COMMANDS_END = PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END;
+
+    /**
+     * The table <code>POWERCAMERA_COMMANDS_START</code>.
+     */
+    public final PowercameraCommandsStart POWERCAMERA_COMMANDS_START = PowercameraCommandsStart.POWERCAMERA_COMMANDS_START;
+
+    /**
+     * The table <code>POWERCAMERA_PLAYERS</code>.
      */
     public final PowercameraPlayers POWERCAMERA_PLAYERS = PowercameraPlayers.POWERCAMERA_PLAYERS;
 
     /**
-     * The table <code>powercamera_points</code>.
+     * The table <code>POWERCAMERA_POINTS</code>.
      */
     public final PowercameraPoints POWERCAMERA_POINTS = PowercameraPoints.POWERCAMERA_POINTS;
 
@@ -61,6 +73,8 @@ public class DefaultSchema extends SchemaImpl {
     public final List<Table<?>> getTables() {
         return Arrays.asList(
             PowercameraCameras.POWERCAMERA_CAMERAS,
+            PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END,
+            PowercameraCommandsStart.POWERCAMERA_COMMANDS_START,
             PowercameraPlayers.POWERCAMERA_PLAYERS,
             PowercameraPoints.POWERCAMERA_POINTS
         );

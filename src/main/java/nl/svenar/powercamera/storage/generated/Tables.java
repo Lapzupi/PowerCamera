@@ -5,6 +5,8 @@ package nl.svenar.powercamera.storage.generated;
 
 
 import nl.svenar.powercamera.storage.generated.tables.PowercameraCameras;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsEnd;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsStart;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPlayers;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPoints;
 
@@ -16,17 +18,27 @@ import nl.svenar.powercamera.storage.generated.tables.PowercameraPoints;
 public class Tables {
 
     /**
-     * The table <code>powercamera_cameras</code>.
+     * The table <code>POWERCAMERA_CAMERAS</code>.
      */
     public static final PowercameraCameras POWERCAMERA_CAMERAS = PowercameraCameras.POWERCAMERA_CAMERAS;
 
     /**
-     * The table <code>powercamera_players</code>.
+     * The table <code>POWERCAMERA_COMMANDS_END</code>.
+     */
+    public static final PowercameraCommandsEnd POWERCAMERA_COMMANDS_END = PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END;
+
+    /**
+     * The table <code>POWERCAMERA_COMMANDS_START</code>.
+     */
+    public static final PowercameraCommandsStart POWERCAMERA_COMMANDS_START = PowercameraCommandsStart.POWERCAMERA_COMMANDS_START;
+
+    /**
+     * The table <code>POWERCAMERA_PLAYERS</code>.
      */
     public static final PowercameraPlayers POWERCAMERA_PLAYERS = PowercameraPlayers.POWERCAMERA_PLAYERS;
 
     /**
-     * The table <code>powercamera_points</code>.
+     * The table <code>POWERCAMERA_POINTS</code>.
      */
     public static final PowercameraPoints POWERCAMERA_POINTS = PowercameraPoints.POWERCAMERA_POINTS;
 }

@@ -22,42 +22,42 @@ public class PowercameraPlayersRecord extends UpdatableRecordImpl<PowercameraPla
     private static final long serialVersionUID = 1L;
 
     /**
-     * Setter for <code>powercamera_players.ID</code>.
+     * Setter for <code>POWERCAMERA_PLAYERS.ID</code>.
      */
     public void setId(Integer value) {
         set(0, value);
     }
 
     /**
-     * Getter for <code>powercamera_players.ID</code>.
+     * Getter for <code>POWERCAMERA_PLAYERS.ID</code>.
      */
     public Integer getId() {
         return (Integer) get(0);
     }
 
     /**
-     * Setter for <code>powercamera_players.UUID</code>.
+     * Setter for <code>POWERCAMERA_PLAYERS.UUID</code>.
      */
     public void setUuid(String value) {
         set(1, value);
     }
 
     /**
-     * Getter for <code>powercamera_players.UUID</code>.
+     * Getter for <code>POWERCAMERA_PLAYERS.UUID</code>.
      */
     public String getUuid() {
         return (String) get(1);
     }
 
     /**
-     * Setter for <code>powercamera_players.CAMERA_ID</code>.
+     * Setter for <code>POWERCAMERA_PLAYERS.CAMERA_ID</code>.
      */
     public void setCameraId(String value) {
         set(2, value);
     }
 
     /**
-     * Getter for <code>powercamera_players.CAMERA_ID</code>.
+     * Getter for <code>POWERCAMERA_PLAYERS.CAMERA_ID</code>.
      */
     public String getCameraId() {
         return (String) get(2);

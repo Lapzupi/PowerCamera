@@ -9,6 +9,8 @@ import java.util.List;
  * @author sarhatabaot
  */
 public class CameraPoint {
+    private final String cameraId;
+
     private Type type; //move, teleport,...?
     private Easing easing; //linear, none, ...?
     private Double duration;
@@ -16,8 +18,8 @@ public class CameraPoint {
     private List<String> commandsStart;
     private List<String> commandsEnd;
 
-
-    public CameraPoint(final Type type, final Easing easing, final Double duration, final Location location, final List<String> commandsStart, final List<String> commandsEnd) {
+    public CameraPoint(final String cameraId, final Type type, final Easing easing, final Double duration, final Location location, final List<String> commandsStart, final List<String> commandsEnd) {
+        this.cameraId = cameraId;
         this.type = type;
         this.easing = easing;
         this.duration = duration;
@@ -26,7 +28,8 @@ public class CameraPoint {
         this.commandsEnd = commandsEnd;
     }
 
-    public CameraPoint(final Type type, final Easing easing, final Double duration, final Location location) {
+    public CameraPoint(final String cameraId, final Type type, final Easing easing, final Double duration, final Location location) {
+        this.cameraId = cameraId;
         this.type = type;
         this.easing = easing;
         this.duration = duration;
@@ -85,6 +88,7 @@ public class CameraPoint {
     @Override
     public String toString() {
         return "CameraPoint{" +
+                "cameraId="+ cameraId +
                 "type=" + type +
                 ", easing=" + easing +
                 ", duration=" + duration +
