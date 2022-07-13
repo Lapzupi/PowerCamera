@@ -28,6 +28,14 @@ public class Camera {
         this.returnToOrigin = returnToOrigin;
     }
 
+    public Camera(final String id, final String alias, final List<CameraPoint> points, final boolean returnToOrigin) {
+        this.id = id;
+        this.alias = alias;
+        this.points = points;
+        this.totalDuration = calculateTotalDuration();
+        this.returnToOrigin = returnToOrigin;
+    }
+
 
     public String getId() {
         return id;

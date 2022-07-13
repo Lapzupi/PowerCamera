@@ -3,6 +3,7 @@ package nl.svenar.powercamera.storage;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
 
+import java.sql.Connection;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +23,10 @@ public interface CameraStorage {
     CompletableFuture<Void> createCamera(final String cameraId);
 
     CompletableFuture<Void> deleteCamera(final String cameraId);
+
+    CompletableFuture<Void> addPoint(final CameraPoint cameraPoint);
+
+    CompletableFuture<Void> removePoint(final String cameraId, final int pointNum);
 
     CompletableFuture<Set<String>> getCameraIds();
 

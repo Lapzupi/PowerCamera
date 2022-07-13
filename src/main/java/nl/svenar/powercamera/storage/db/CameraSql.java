@@ -190,6 +190,16 @@ public class CameraSql implements CameraStorage {
     }
 
     @Override
+    public CompletableFuture<Void> addPoint(final CameraPoint cameraPoint) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> removePoint(final String cameraId, final int pointNum) {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<Set<String>> getCameraIds() {
         ExecuteQuery<Set<String>, Result<Record>, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
             @Override

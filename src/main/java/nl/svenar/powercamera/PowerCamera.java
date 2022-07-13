@@ -6,11 +6,20 @@ import java.util.List;
 
 import co.aikar.commands.PaperCommandManager;
 import com.github.sarhatabaot.kraken.core.db.ConnectionFactory;
+import com.github.sarhatabaot.kraken.core.db.MySqlConnectionFactory;
+import com.github.sarhatabaot.kraken.core.db.SqlLiteConnectionFactory;
+import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
 import nl.svenar.powercamera.commands.PowerCameraCommand;
+import nl.svenar.powercamera.storage.CameraStorage;
+import nl.svenar.powercamera.storage.PlayerStorage;
 import nl.svenar.powercamera.storage.configurate.CameraConfigurate;
+import nl.svenar.powercamera.storage.configurate.PlayersConfigurate;
+import nl.svenar.powercamera.storage.db.CameraSql;
+import nl.svenar.powercamera.storage.db.PlayerSql;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import nl.svenar.powercamera.config.PluginConfig;
@@ -23,35 +32,27 @@ public class PowerCamera extends JavaPlugin {
     private final String pluginChatPrefix = ChatColor.BLACK + "[" + ChatColor.AQUA + getDescription().getName() + ChatColor.BLACK + "] ";
 
     private PluginConfig pluginConfig;
-    private CameraConfigurate cameraConfigurate;
+
+    private CameraStorage cameraStorage;
+    private PlayerStorage playerStorage;
 
     //These Should be in managers/caches
     private PlayerManager playerManager;
     private CameraManager cameraManager;
 
-    private ConnectionFactory<PowerCamera> connectionFactory;
 
     private final Instant startTime = Instant.now();
 
     @Override
     public void onEnable() {
         initConfig();
-        try {
-            this.cameraConfigurate = new CameraConfigurate(this);
-        } catch (ConfigurateException e) {
-            getLogger().severe(() -> "Could not initialize cameras.conf");
-            getLogger().warning(() -> "Please fix any errors and reload the plugin.");
-            e.printStackTrace();
-        }
-
+        initStorage();
         initManagers();
-        Bukkit.getServer().getPluginManager().registerEvents(new OnMove(this), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new OnJoin(this), this);
+
+        registerListeners();
 
         initCommands();
-
         getLogger().info(() -> "Enabled %s v%s".formatted(getDescription().getName(), getDescription().getVersion()));
-
         @SuppressWarnings("unused")
         Metrics metrics = new Metrics(this, 9107);
     }
@@ -64,6 +65,12 @@ public class PowerCamera extends JavaPlugin {
             getLogger().warning(() -> "Please fix any errors and reload the plugin.");
             e.printStackTrace();
         }
+    }
+
+    private void registerListeners() {
+        PluginManager pluginManager = Bukkit.getServer().getPluginManager();
+        pluginManager.registerEvents(new OnMove(this), this);
+        pluginManager.registerEvents(new OnJoin(this), this);
     }
 
     private void initCommands() {
@@ -84,16 +91,27 @@ public class PowerCamera extends JavaPlugin {
 
     private void initStorage() {
         String databaseType = pluginConfig.getDatabase().getType();
-        switch (databaseType){
-            case "hocon": {
-
+        switch (databaseType) {
+            case "sql" -> {
+                ConnectionFactory<PowerCamera> connectionFactory = new MySqlConnectionFactory<>("powercamera-hikari");
+                this.cameraStorage = new CameraSql(connectionFactory);
+                this.playerStorage = new PlayerSql(connectionFactory);
             }
-            case "sql": {
-
+            case "sqlite" -> {
+                ConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
+                this.cameraStorage = new CameraSql(connectionFactory);
+                this.playerStorage = new PlayerSql(connectionFactory);
             }
-            case "sqlite": {
-
+            //hocon
+            default -> {
+                try {
+                    this.cameraStorage = new CameraConfigurate(this);
+                    this.playerStorage = new PlayersConfigurate(this);
+                } catch (ConfigurateException e) {
+                    LoggerUtil.logSevereException(e);
+                }
             }
+
         }
 
     }
@@ -117,8 +135,8 @@ public class PowerCamera extends JavaPlugin {
         return startTime;
     }
 
-    public CameraConfigurate getCameraStorage() {
-        return cameraConfigurate;
+    public CameraStorage getCameraStorage() {
+        return cameraStorage;
     }
 
     public PlayerManager getPlayerManager() {
@@ -132,5 +150,9 @@ public class PowerCamera extends JavaPlugin {
 			list.add(i);
 		}
 		return list;
+    }
+
+    public CameraManager getCameraManager() {
+        return cameraManager;
     }
 }

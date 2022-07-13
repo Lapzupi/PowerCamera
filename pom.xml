@@ -79,7 +79,7 @@
                                 <properties>
                                     <property>
                                         <key>scripts</key>
-                                        <value>src/main/resources/db/base/database.sql</value>
+                                        <value>src/main/resources/db/base/V1__database.sql</value>
                                     </property>
                                     <property>
                                         <key>sort</key>

@@ -97,4 +97,8 @@ public class CameraPoint {
                 ", commandsEnd=" + commandsEnd +
                 '}';
     }
+
+    public String getCameraId() {
+        return cameraId;
+    }
 }

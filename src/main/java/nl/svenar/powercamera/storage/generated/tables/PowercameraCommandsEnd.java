@@ -4,6 +4,8 @@
 package nl.svenar.powercamera.storage.generated.tables;
 
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import nl.svenar.powercamera.storage.generated.DefaultSchema;
@@ -121,6 +123,36 @@ public class PowercameraCommandsEnd extends TableImpl<PowercameraCommandsEndReco
     @Override
     public UniqueKey<PowercameraCommandsEndRecord> getPrimaryKey() {
         return Keys.CONSTRAINT_6;
+    }
+
+    @Override
+    public List<ForeignKey<PowercameraCommandsEndRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.CONSTRAINT_646, Keys.CONSTRAINT_64);
+    }
+
+    private transient PowercameraPoints _powercameraPoints;
+    private transient PowercameraCameras _powercameraCameras;
+
+    /**
+     * Get the implicit join path to the <code>PUBLIC.POWERCAMERA_POINTS</code>
+     * table.
+     */
+    public PowercameraPoints powercameraPoints() {
+        if (_powercameraPoints == null)
+            _powercameraPoints = new PowercameraPoints(this, Keys.CONSTRAINT_646);
+
+        return _powercameraPoints;
+    }
+
+    /**
+     * Get the implicit join path to the <code>PUBLIC.POWERCAMERA_CAMERAS</code>
+     * table.
+     */
+    public PowercameraCameras powercameraCameras() {
+        if (_powercameraCameras == null)
+            _powercameraCameras = new PowercameraCameras(this, Keys.CONSTRAINT_64);
+
+        return _powercameraCameras;
     }
 
     @Override

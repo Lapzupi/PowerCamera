@@ -62,7 +62,7 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
     /**
      * The column <code>POWERCAMERA_POINTS.CAMERA_ID</code>.
      */
-    public final TableField<PowercameraPointsRecord, String> CAMERA_ID = createField(DSL.name("CAMERA_ID"), SQLDataType.VARCHAR(15).nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, String> CAMERA_ID = createField(DSL.name("CAMERA_ID"), SQLDataType.VARCHAR(16).nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.WORLD_NAME</code>.

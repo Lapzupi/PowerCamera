@@ -29,11 +29,11 @@ public class OnJoin implements Listener {
             return;
 
         final String cameraId = plugin.getConfigPlugin().getJoin().getCameraId();
-        if(!plugin.getCameraStorage().hasCamera(cameraId)) {
+        if(!plugin.getCameraManager().hasCamera(cameraId)) {
             return;
         }
 
-        final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
+        final Camera camera = plugin.getCameraManager().getCamera(cameraId);
         this.plugin.getPlayerManager().setRunningTask(player.getUniqueId(),new CameraRunnable(plugin, player, camera).start());
     }
 }

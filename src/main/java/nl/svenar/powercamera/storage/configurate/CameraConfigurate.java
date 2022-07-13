@@ -32,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> implements CameraStorage {
     private Map<String, Camera> cameras;
     private final CommentedConfigurationNode cameraNode;
+
     public CameraConfigurate(@NotNull final PowerCamera plugin) throws ConfigurateException {
         super(plugin, "", "cameras.conf", "");
 
@@ -43,10 +44,10 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         this.cameras = new HashMap<>();
 
         final CommentedConfigurationNode camerasNode = rootNode.node("cameras");
-        for(Map.Entry<Object, CommentedConfigurationNode> entry: camerasNode.childrenMap().entrySet()) {
+        for (Map.Entry<Object, CommentedConfigurationNode> entry : camerasNode.childrenMap().entrySet()) {
             final String cameraId = entry.getKey().toString();
             final Camera camera = entry.getValue().get(Camera.class);
-            this.cameras.put(cameraId,camera);
+            this.cameras.put(cameraId, camera);
         }
     }
 
@@ -55,11 +56,26 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
     }
 
     @Override
+    public CompletableFuture<List<CameraPoint>> getCameraPoints(final String cameraId) {
+        return CompletableFuture.supplyAsync(() -> this.cameras.get(cameraId).getPoints());
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getCommandsStart(final String cameraId, final int pointNum) {
+        return CompletableFuture.supplyAsync(() -> this.cameras.get(cameraId).getPoints().get(pointNum).getCommandsStart());
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getCommandsEnd(final String cameraId, final int pointNum) {
+        return CompletableFuture.supplyAsync(() -> this.cameras.get(cameraId).getPoints().get(pointNum).getCommandsEnd());
+    }
+
+    @Override
     protected void builderOptions() {
         loaderBuilder.defaultOptions(opts -> opts.serializers(builder ->
-                builder.register(Location.class,LocationSerializer.INSTANCE)
+                builder.register(Location.class, LocationSerializer.INSTANCE)
                         .register(CameraPoint.class, CameraPointSerializer.INSTANCE)
-                        .register(Camera.class,CameraSerializer.INSTANCE)));
+                        .register(Camera.class, CameraSerializer.INSTANCE)));
     }
 
     @Override
@@ -73,6 +89,7 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
 
     /**
      * Tries to get a camera directly.
+     *
      * @param id camera id
      * @return Camera object
      */
@@ -94,27 +111,28 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         return null;
     }
 
-    public CompletableFuture<Camera> createCamera(final String id){
-        final Camera camera = new Camera(id);
-        saveCamera(camera);
-        return CompletableFuture.completedFuture(camera);
+    public CompletableFuture<Void> createCamera(final String id) {
+        return CompletableFuture.supplyAsync(() -> {
+            saveCamera(new Camera(id));
+            return null;
+        });
     }
 
     public CompletableFuture<Void> deleteCamera(final String id) {
-        if(!hasCamera(id).get()) {
-            // no such camera
-            return null;
-        }
+        return CompletableFuture.supplyAsync(() -> {
+                    rootNode.removeChild(id);
+                    try {
+                        loader.save(rootNode);
+                        reloadConfig();
+                    } catch (ConfigurateException e) {
+                        //
+                    }
 
-        rootNode.removeChild(id);
-        try {
-            loader.save(rootNode);
-            reloadConfig();
-        } catch (ConfigurateException e){
-            //
-        }
+                    reloadConfig();
+                    return null;
+                }
+        );
 
-        reloadConfig();
     }
 
     public void saveCamera(final @NotNull Camera camera) {
@@ -128,10 +146,9 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         }
     }
 
-    public CompletableFuture<Set<String>> getCameraIds(){
+    public CompletableFuture<Set<String>> getCameraIds() {
         return CompletableFuture.completedFuture(cameras.keySet());
     }
-
 
 
     public static class CameraSerializer implements TypeSerializer<Camera> {
@@ -143,7 +160,7 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         @Override
         public Camera deserialize(final Type type, final @NotNull ConfigurationNode node) throws SerializationException {
             Object key = node.key();
-            if(key == null) {
+            if (key == null) {
                 throw new SerializationException("Could not obtain node key");
             }
 
@@ -152,19 +169,19 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
             final String alias = node.node(ALIAS).getString();
             final List<CameraPoint> points = node.node(POINTS).getList(CameraPoint.class);
 
-            return new Camera(id,alias, points,returnToOrigin);
+            return new Camera(id, alias, points, returnToOrigin);
         }
 
         @Override
         public void serialize(final Type type, @Nullable final Camera camera, final ConfigurationNode node) throws SerializationException {
-            if(camera == null) {
+            if (camera == null) {
                 node.raw(null);
                 return;
             }
 
             node.node(ALIAS).set(camera.getAlias());
             node.node(RETURN_TO_ORIGIN).set(camera.isReturnToOrigin());
-            node.node(POINTS).setList(CameraPoint.class,camera.getPoints());
+            node.node(POINTS).setList(CameraPoint.class, camera.getPoints());
         }
     }
 
@@ -183,6 +200,7 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
 
         @Override
         public CameraPoint deserialize(final Type type, final @NotNull ConfigurationNode node) throws SerializationException {
+            final String cameraId = node.parent().parent().key().toString();
             final CameraPoint.Type pointType = node.node(TYPE).get(CameraPoint.Type.class);
             final CameraPoint.Easing easing = node.node(EASING).get(CameraPoint.Easing.class);
 
@@ -191,7 +209,7 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
 
             final List<String> commandsStart = node.node(COMMANDS).node(START).getList(String.class);
             final List<String> commandsEnd = node.node(COMMANDS).node(END).getList(String.class);
-            return new CameraPoint(pointType,easing,duration,location,commandsStart,commandsEnd);
+            return new CameraPoint(cameraId, pointType, easing, duration, location, commandsStart, commandsEnd);
         }
 
         @Override
@@ -253,5 +271,27 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
             node.node(YAW).set(location.getYaw());
             node.node(PITCH).set(location.getPitch());
         }
+    }
+
+    @Override
+    public CompletableFuture<Void> addPoint(final CameraPoint cameraPoint) {
+        return CompletableFuture.supplyAsync(() -> {
+                    rootNode.node(cameraPoint.getCameraId()).node(CameraSerializer.POINTS); //todo
+                    return null;
+                }
+        );
+    }
+
+    @Override
+    public CompletableFuture<Void> removePoint(final String cameraId, final int pointNum) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                rootNode.node(cameraId).node(CameraSerializer.POINTS).getList(CameraPoint.class).remove(pointNum);
+            } catch (SerializationException e) {
+                return null;
+            }
+            return null;
+        });
+
     }
 }

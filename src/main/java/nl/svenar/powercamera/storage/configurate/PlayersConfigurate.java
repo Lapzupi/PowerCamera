@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 public class PlayersConfigurate extends JsonConfigurateFile<PowerCamera> implements PlayerStorage {
     private Map<String, List<String>> cameraPlayedMap;
 
-    protected PlayersConfigurate(@NotNull final PowerCamera plugin) throws ConfigurateException {
+    public PlayersConfigurate(@NotNull final PowerCamera plugin) throws ConfigurateException {
         super(plugin, "", "players.json", "");
     }
 
@@ -54,6 +54,16 @@ public class PlayersConfigurate extends JsonConfigurateFile<PowerCamera> impleme
             this.cameraPlayedMap.get(cameraId).add(uuid);
         }
 
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> removePlayer(final String uuid, final String cameraId) {
+        return null;
+    }
+
+    @Override
+    public CompletableFuture<Void> removePlayer(final String uuid) {
         return null;
     }
 }

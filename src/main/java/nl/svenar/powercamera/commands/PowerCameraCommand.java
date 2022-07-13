@@ -23,6 +23,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
 
 @CommandAlias("powercamera|pc|camera|pcam")
 public class PowerCameraCommand extends BaseCommand {
@@ -45,33 +46,30 @@ public class PowerCameraCommand extends BaseCommand {
             entry.getValue().stop();
         }
         this.plugin.getConfigPlugin().reloadConfig();
-        this.plugin.getCameraStorage().reloadConfig();
+        //check for storage changes
     }
 
     @Subcommand("create")
     @CommandPermission("powercamera.command.create")
     public void onCreate(final Player sender, final String cameraId) {
-        if (plugin.getCameraStorage().hasCamera(cameraId)) {
+        if (plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sA camera with the id '%s' already exists.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
             return;
         }
 
-        try {
-            final Camera camera = plugin.getCameraStorage().createCamera(cameraId);
-            camera.addPoint(new CameraPoint(CameraPoint.Type.MOVE, CameraPoint.Easing.LINEAR, 60D, sender.getLocation()));
-            plugin.getCameraStorage().saveCamera(camera);
-            sender.sendMessage("%sCamera '%s' created!".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, cameraId));
-            onSelect(sender, cameraId);
-        } catch (ConfigurateException e) {
-            //todo
-        }
+        plugin.getCameraManager().createCamera(cameraId);
+
+        final Camera camera = plugin.getCameraManager().getCamera(cameraId);
+        plugin.getCameraManager().addPoint(new CameraPoint(camera.getId(),CameraPoint.Type.MOVE, CameraPoint.Easing.LINEAR, 60D, sender.getLocation()));
+        sender.sendMessage("%sCamera '%s' created!".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, cameraId));
+        onSelect(sender, cameraId);
     }
 
     @Subcommand("remove")
     @CommandCompletion("@cameras")
     @CommandPermission("powercamera.command.remove")
     public void onRemove(final Player sender, final String cameraId) {
-        if (!plugin.getCameraStorage().hasCamera(cameraId)) {
+        if (!plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sA camera with the id '%s' doesn't exist.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
             return;
         }
@@ -91,13 +89,13 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(player.getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 //mismatched ids, please restart your server
                 plugin.getLogger().severe("Mismatched ids. Something went wrong. Please restart your server.");
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
             final CameraPoint cameraPoint = camera.getPoints().get(num);
             player.teleport(cameraPoint.getLocation());
             player.sendMessage("Teleported to point %d @ %s".formatted(num,cameraPoint.getLocation().toString()));
@@ -112,15 +110,14 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(player.getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 //mismatched ids, please restart your server
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            final CameraPoint cameraPoint = new CameraPoint(type, easing, duration, player.getLocation());
-            camera.addPoint(cameraPoint);
-            plugin.getCameraStorage().saveCamera(camera);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
+            final CameraPoint cameraPoint = new CameraPoint(camera.getId(),type, easing, duration, player.getLocation());
+            plugin.getCameraManager().addPoint(cameraPoint);
             player.sendMessage("%sAdded point '%s' to camera: '%s'".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, cameraPoint.toString(), camera.getId()));
         }
 
@@ -134,15 +131,14 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(player.getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 //mismatched ids, please restart your server
                 plugin.getLogger().severe("Mismatched ids. Something went wrong. Please restart your server.");
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
-            camera.deletePoint(num);
-            plugin.getCameraStorage().saveCamera(camera);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
+            plugin.getCameraManager().removePoint(camera.getId(), num);
             player.sendMessage("%sRemoved point %d from camera '%s'.".formatted(plugin.getPluginChatPrefix() + ChatColor.GREEN, num, selectedCameraId));
         }
 
@@ -156,13 +152,13 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(player.getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 //mismatched ids, please restart your server
                 plugin.getLogger().severe("Mismatched ids. Something went wrong. Please restart your server.");
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
             if (num >= camera.getPoints().size()) {
                 player.sendMessage("%sPlease specify a number between 0-%d".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, camera.getPoints().size() - 1));
                 return;
@@ -179,7 +175,7 @@ public class PowerCameraCommand extends BaseCommand {
     @CommandCompletion("@cameras")
     @CommandPermission("powercamera.command.select")
     public void onSelect(final Player sender, final String cameraId) {
-        if (!plugin.getCameraStorage().hasCamera(cameraId)) {
+        if (!plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sCamera '%s' does not exist.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
             return;
         }
@@ -209,7 +205,7 @@ public class PowerCameraCommand extends BaseCommand {
             return;
         }
 
-        final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+        final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
         playerManager.setRunningTask(sender.getUniqueId(), new CameraRunnable(plugin, sender, camera).preview(sender, point, previewTime));
 
     }
@@ -223,22 +219,22 @@ public class PowerCameraCommand extends BaseCommand {
                 return;
             }
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(sender.getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 //mistmatched ids, should never happen todo
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
             sendInfoMessage(sender, camera);
             return;
         }
 
-        if (!plugin.getCameraStorage().hasCamera(cameraId)) {
+        if (!plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sA camera with the id '%s' doesn't exist.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
             return;
         }
 
-        final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
+        final Camera camera = plugin.getCameraManager().getCamera(cameraId);
         sendInfoMessage(sender, camera);
     }
 
@@ -264,21 +260,21 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(target.getPlayer().getUniqueId());
-            if (!plugin.getCameraStorage().hasCamera(selectedCameraId)) {
+            if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
                 return;
             }
 
-            final Camera camera = plugin.getCameraStorage().getCamera(selectedCameraId);
+            final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
             CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
             plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
             return;
         }
 
-        if (!plugin.getCameraStorage().hasCamera(cameraId)) {
+        if (!plugin.getCameraManager().hasCamera(cameraId)) {
             return;
         }
 
-        final Camera camera = plugin.getCameraStorage().getCamera(cameraId);
+        final Camera camera = plugin.getCameraManager().getCamera(cameraId);
         CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
         plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
     }

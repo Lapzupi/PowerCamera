@@ -52,7 +52,7 @@ public class PowercameraCameras extends TableImpl<PowercameraCamerasRecord> {
     /**
      * The column <code>POWERCAMERA_CAMERAS.ID</code>.
      */
-    public final TableField<PowercameraCamerasRecord, String> ID = createField(DSL.name("ID"), SQLDataType.VARCHAR(15).nullable(false), this, "");
+    public final TableField<PowercameraCamerasRecord, String> ID = createField(DSL.name("ID"), SQLDataType.VARCHAR(16).nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_CAMERAS.ALIAS</code>.

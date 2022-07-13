@@ -4,6 +4,8 @@
 package nl.svenar.powercamera.storage.generated.tables;
 
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Function;
 
 import nl.svenar.powercamera.storage.generated.DefaultSchema;
@@ -63,7 +65,7 @@ public class PowercameraPlayers extends TableImpl<PowercameraPlayersRecord> {
     /**
      * The column <code>POWERCAMERA_PLAYERS.CAMERA_ID</code>.
      */
-    public final TableField<PowercameraPlayersRecord, String> CAMERA_ID = createField(DSL.name("CAMERA_ID"), SQLDataType.VARCHAR(15).nullable(false), this, "");
+    public final TableField<PowercameraPlayersRecord, String> CAMERA_ID = createField(DSL.name("CAMERA_ID"), SQLDataType.VARCHAR(16).nullable(false), this, "");
 
     private PowercameraPlayers(Name alias, Table<PowercameraPlayersRecord> aliased) {
         this(alias, aliased, null);
@@ -111,6 +113,24 @@ public class PowercameraPlayers extends TableImpl<PowercameraPlayersRecord> {
     @Override
     public UniqueKey<PowercameraPlayersRecord> getPrimaryKey() {
         return Keys.CONSTRAINT_8;
+    }
+
+    @Override
+    public List<ForeignKey<PowercameraPlayersRecord, ?>> getReferences() {
+        return Arrays.asList(Keys.CONSTRAINT_89);
+    }
+
+    private transient PowercameraCameras _powercameraCameras;
+
+    /**
+     * Get the implicit join path to the <code>PUBLIC.POWERCAMERA_CAMERAS</code>
+     * table.
+     */
+    public PowercameraCameras powercameraCameras() {
+        if (_powercameraCameras == null)
+            _powercameraCameras = new PowercameraCameras(this, Keys.CONSTRAINT_89);
+
+        return _powercameraCameras;
     }
 
     @Override
