@@ -8,6 +8,8 @@ import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
 import nl.svenar.powercamera.storage.CameraStorage;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraCameras;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsEnd;
+import nl.svenar.powercamera.storage.generated.tables.PowercameraCommandsStart;
 import nl.svenar.powercamera.storage.generated.tables.PowercameraPoints;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -132,19 +134,21 @@ public class CameraSql implements CameraStorage {
     public CompletableFuture<Boolean> hasCameraPoint(final String cameraId, final int num) {
         ExecuteQuery<Boolean, Record, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
             @Override
-            public Boolean onRunQuery(final DSLContext dslContext) throws Exception {
+            public @NotNull Boolean onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
                 return dslContext.fetchExists(PowercameraPoints.POWERCAMERA_POINTS
                                 .where(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID.eq(cameraId)
                                         .and(PowercameraPoints.POWERCAMERA_POINTS.NUM.eq(num))));
             }
 
+            @Contract(pure = true)
             @Override
-            public Boolean getQuery(@NotNull final Record result) throws Exception {
+            public @NotNull Boolean getQuery(@NotNull final Record result) throws Exception {
                 return false;
             }
 
+            @Contract(pure = true)
             @Override
-            public Boolean empty() {
+            public @NotNull Boolean empty() {
                 return false;
             }
         };
@@ -156,7 +160,7 @@ public class CameraSql implements CameraStorage {
         return CompletableFuture.supplyAsync(() -> {
             ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
                 @Override
-                protected void onRunUpdate(final DSLContext dslContext) {
+                protected void onRunUpdate(final @NotNull DSLContext dslContext) {
                     dslContext.insertInto(PowercameraCameras.POWERCAMERA_CAMERAS)
                             .set(PowercameraCameras.POWERCAMERA_CAMERAS.ID, cameraId)
                             .executeAsync(); //todo test
@@ -189,7 +193,7 @@ public class CameraSql implements CameraStorage {
     public CompletableFuture<Set<String>> getCameraIds() {
         ExecuteQuery<Set<String>, Result<Record>, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
             @Override
-            public Set<String> onRunQuery(final DSLContext dslContext) throws Exception {
+            public @NotNull Set<String> onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
                 Result<Record> recordResult = dslContext.select()
                         .from(PowercameraCameras.POWERCAMERA_CAMERAS)
                         .fetch();
@@ -197,7 +201,7 @@ public class CameraSql implements CameraStorage {
             }
 
             @Override
-            public Set<String> getQuery(@NotNull final Result<Record> result) throws Exception {
+            public @NotNull Set<String> getQuery(@NotNull final Result<Record> result) throws Exception {
                 Set<String> idSet = new HashSet<>();
                 for(Record recordResult: result) {
                     idSet.add(recordResult.getValue(PowercameraCameras.POWERCAMERA_CAMERAS.ID));
@@ -205,8 +209,9 @@ public class CameraSql implements CameraStorage {
                 return idSet;
             }
 
+            @Contract(pure = true)
             @Override
-            public Set<String> empty() {
+            public @NotNull @Unmodifiable Set<String> empty() {
                 return Collections.emptySet();
             }
         };
@@ -284,7 +289,68 @@ public class CameraSql implements CameraStorage {
         CameraPoint.Type type = CameraPoint.Type.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.TYPE).getLiteral());
         World world = Bukkit.getWorld(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.WORLD_NAME));
         final Location location = new Location(world, x, y, z, yaw,pitch);
+
         //todo add commands
         return new CameraPoint(cameraId,type,easing,duration,location);
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getCommandsStart(final String cameraId, final int pointNum) {
+        ExecuteQuery<List<String>, Result<Record>, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
+            @Override
+            public List<String> onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
+                Result<Record> result = dslContext.select()
+                        .from(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START)
+                        .where(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.CAMERA_ID.eq(cameraId))
+                        .and(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.POINT_NUM.eq(pointNum))
+                        .fetch();
+                if(result.isEmpty())
+                    return empty();
+                return getQuery(result);
+            }
+
+            @Contract(pure = true)
+            @Override
+            public @Nullable List<String> getQuery(@NotNull final Result<Record> result) throws Exception {
+                return null;
+            }
+
+            @Contract(pure = true)
+            @Override
+            public @NotNull @Unmodifiable List<String> empty() {
+                return Collections.emptyList();
+            }
+        };
+        return CompletableFuture.supplyAsync(executeQuery::prepareAndRunQuery);
+    }
+
+    @Override
+    public CompletableFuture<List<String>> getCommandsEnd(final String cameraId, final int pointNum) {
+        ExecuteQuery<List<String>, Result<Record>, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
+            @Override
+            public List<String> onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
+                Result<Record> result = dslContext.select()
+                        .from(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END)
+                        .where(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END.CAMERA_ID.eq(cameraId))
+                        .and(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END.POINT_NUM.eq(pointNum))
+                        .fetch();
+                if(result.isEmpty())
+                    return empty();
+                return getQuery(result);
+            }
+
+            @Contract(pure = true)
+            @Override
+            public @Nullable List<String> getQuery(@NotNull final Result<Record> result) throws Exception {
+                return null;
+            }
+
+            @Contract(pure = true)
+            @Override
+            public @NotNull @Unmodifiable List<String> empty() {
+                return Collections.emptyList();
+            }
+        };
+        return CompletableFuture.supplyAsync(executeQuery::prepareAndRunQuery);
     }
 }

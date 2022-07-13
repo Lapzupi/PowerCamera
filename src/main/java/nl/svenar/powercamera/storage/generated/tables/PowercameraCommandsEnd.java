@@ -12,12 +12,12 @@ import nl.svenar.powercamera.storage.generated.tables.records.PowercameraCommand
 
 import org.jooq.Field;
 import org.jooq.ForeignKey;
-import org.jooq.Function4;
+import org.jooq.Function5;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Records;
-import org.jooq.Row4;
+import org.jooq.Row5;
 import org.jooq.Schema;
 import org.jooq.SelectField;
 import org.jooq.Table;
@@ -51,9 +51,14 @@ public class PowercameraCommandsEnd extends TableImpl<PowercameraCommandsEndReco
     }
 
     /**
-     * The column <code>POWERCAMERA_COMMANDS_END.id</code>.
+     * The column <code>POWERCAMERA_COMMANDS_END.ID</code>.
      */
-    public final TableField<PowercameraCommandsEndRecord, Integer> ID = createField(DSL.name("id"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+    public final TableField<PowercameraCommandsEndRecord, Integer> ID = createField(DSL.name("ID"), SQLDataType.INTEGER.nullable(false).identity(true), this, "");
+
+    /**
+     * The column <code>POWERCAMERA_COMMANDS_END.POINT_NUM</code>.
+     */
+    public final TableField<PowercameraCommandsEndRecord, Integer> POINT_NUM = createField(DSL.name("POINT_NUM"), SQLDataType.INTEGER.nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_COMMANDS_END.CAMERA_ID</code>.
@@ -158,18 +163,18 @@ public class PowercameraCommandsEnd extends TableImpl<PowercameraCommandsEndReco
     }
 
     // -------------------------------------------------------------------------
-    // Row4 type methods
+    // Row5 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row4<Integer, String, Integer, String> fieldsRow() {
-        return (Row4) super.fieldsRow();
+    public Row5<Integer, Integer, String, Integer, String> fieldsRow() {
+        return (Row5) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function4<? super Integer, ? super String, ? super Integer, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function5<? super Integer, ? super Integer, ? super String, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -177,7 +182,7 @@ public class PowercameraCommandsEnd extends TableImpl<PowercameraCommandsEndReco
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function4<? super Integer, ? super String, ? super Integer, ? super String, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function5<? super Integer, ? super Integer, ? super String, ? super Integer, ? super String, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

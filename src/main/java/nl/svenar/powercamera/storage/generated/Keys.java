@@ -15,6 +15,7 @@ import nl.svenar.powercamera.storage.generated.tables.records.PowercameraCommand
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraPlayersRecord;
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraPointsRecord;
 
+import org.jooq.ForeignKey;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
@@ -37,4 +38,10 @@ public class Keys {
     public static final UniqueKey<PowercameraCommandsStartRecord> CONSTRAINT_E = Internal.createUniqueKey(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START, DSL.name("CONSTRAINT_E"), new TableField[] { PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.ID }, true);
     public static final UniqueKey<PowercameraPlayersRecord> CONSTRAINT_8 = Internal.createUniqueKey(PowercameraPlayers.POWERCAMERA_PLAYERS, DSL.name("CONSTRAINT_8"), new TableField[] { PowercameraPlayers.POWERCAMERA_PLAYERS.ID }, true);
     public static final UniqueKey<PowercameraPointsRecord> CONSTRAINT_9 = Internal.createUniqueKey(PowercameraPoints.POWERCAMERA_POINTS, DSL.name("CONSTRAINT_9"), new TableField[] { PowercameraPoints.POWERCAMERA_POINTS.NUM }, true);
+
+    // -------------------------------------------------------------------------
+    // FOREIGN KEY definitions
+    // -------------------------------------------------------------------------
+
+    public static final ForeignKey<PowercameraPointsRecord, PowercameraCamerasRecord> CONSTRAINT_99 = Internal.createForeignKey(PowercameraPoints.POWERCAMERA_POINTS, DSL.name("CONSTRAINT_99"), new TableField[] { PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID }, Keys.CONSTRAINT_C, new TableField[] { PowercameraCameras.POWERCAMERA_CAMERAS.ID }, true);
 }
