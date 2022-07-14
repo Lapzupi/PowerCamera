@@ -218,7 +218,6 @@ public class PowerCameraCommand extends BaseCommand {
             }
             final String selectedCameraId = plugin.getPlayerManager().getSelectedCameraId(sender.getUniqueId());
             if (!plugin.getCameraManager().hasCamera(selectedCameraId)) {
-                //mistmatched ids, should never happen todo
                 return;
             }
 
