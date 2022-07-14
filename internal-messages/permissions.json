@@ -1,0 +1,22 @@
+{
+  "bypass-join-camera": "powercamera.bypass.joincamera",
+  "show-start-messages": "powercamera.showstartmessages",
+  "command": {
+    "reload": "powercamera.command.reload",
+    "create": "powercamera.command.create",
+    "remove": "powercamera.command.remove",
+    "point-tp": "powercamera.command.point.tp",
+    "point-add": "powercamera.command.point.add",
+    "point-delete": "powercamera.command.point.delete",
+    "point-duration": "powercamera.command.point.duration",
+    "select": "powercamera.command.select",
+    "preview": "powercamera.command.preview",
+    "info": "powercamera.command.info",
+    "start": "powercamera.command.start",
+    "stop": "powercamera.command.stop",
+    "stats": "powercamera.command.stats",
+    "invisible": "powercamera.command.invisible",
+    "help": "powercamera.command.help"
+  }
+
+}

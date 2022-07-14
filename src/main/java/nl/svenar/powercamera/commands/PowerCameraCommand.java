@@ -79,7 +79,7 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("point")
     public class PointSubCommand extends BaseCommand {
         @Subcommand("tp")
-        @CommandPermission("powercamera.command.point.add")
+        @CommandPermission("powercamera.command.point.tp")
         public void onTeleport(final @NotNull Player player, final int num) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
                 player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));

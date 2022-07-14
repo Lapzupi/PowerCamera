@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Generate &amp; Format Internal Messages" type="CompoundRunConfigurationType">
+    <toRun name="powercamera [messages:generate@json]" type="MavenRunConfiguration" />
+    <toRun name="powercamera [formatter:format]" type="MavenRunConfiguration" />
+    <method v="2" />
+  </configuration>
+</component>

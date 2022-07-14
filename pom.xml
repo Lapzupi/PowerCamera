@@ -27,6 +27,8 @@
         <flyway.version>8.5.13</flyway.version>
         <jooq.version>3.17.2</jooq.version>
         <mariadb.version>2.7.4</mariadb.version>
+        <messages.plugin.version>1.2.3</messages.plugin.version>
+        <formatter.version>2.19.0</formatter.version>
     </properties>
 
     <build>
@@ -102,6 +104,16 @@
                         </generator>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>net.revelc.code.formatter</groupId>
+                    <artifactId>formatter-maven-plugin</artifactId>
+                    <version>${formatter.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>nl/svenar/powercamera/Permissions.java</include>
+                        </includes>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
@@ -135,6 +147,28 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.github.sarhatabaot</groupId>
+                <artifactId>messages-maven-plugin</artifactId>
+                <version>${messages.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>json</id>
+                        <configuration>
+                            <fileType>JSON</fileType>
+                            <overwriteClasses>true</overwriteClasses>
+                            <sourceFolder>internal-messages</sourceFolder>
+                            <targetPackage>nl.svenar.powercamera</targetPackage>
+                            <privateConstructor>"Util class"</privateConstructor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
+                <version>${formatter.version}</version>
             </plugin>
         </plugins>
         <resources>
