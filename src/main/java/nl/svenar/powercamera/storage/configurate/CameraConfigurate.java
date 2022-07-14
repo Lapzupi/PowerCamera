@@ -20,11 +20,13 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import org.spongepowered.configurate.serialize.TypeSerializer;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author sarhatabaot
@@ -150,6 +152,47 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         return CompletableFuture.completedFuture(cameras.keySet());
     }
 
+    @Override
+    public CompletableFuture<Void> addPoint(final CameraPoint cameraPoint) {
+        return CompletableFuture.supplyAsync(() -> {
+                    try {
+                        List<CameraPoint> cameraPoints = new ArrayList<>(getCameraPoints(cameraPoint.getCameraId()).get());
+                        cameraPoints.add(cameraPoint);
+                        rootNode.node(cameraPoint.getCameraId()).node(CameraSerializer.POINTS).setList(CameraPoint.class, cameraPoints);
+                        saveAndLoadRootNode();
+                        return null;
+                    } catch (InterruptedException | ExecutionException | ConfigurateException e) {
+                        CompletableFuture.failedFuture(e);
+                        return null;
+                    }
+                }
+        );
+    }
+
+    @Override
+    public CompletableFuture<Void> removePoint(final String cameraId, final int pointNum) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                rootNode.node(cameraId).node(CameraSerializer.POINTS).getList(CameraPoint.class).remove(pointNum);
+                saveAndLoadRootNode();
+            } catch (SerializationException e) {
+                return null;
+            }
+            return null;
+        });
+
+    }
+
+    private void saveAndLoadRootNode() {
+        try {
+            loader.save(rootNode);
+            rootNode = loader.load();
+            initValues();
+        } catch (ConfigurateException e) {
+            LoggerUtil.logSevereException(e);
+        }
+    }
+
 
     public static class CameraSerializer implements TypeSerializer<Camera> {
         public static final CameraSerializer INSTANCE = new CameraSerializer();
@@ -273,25 +316,5 @@ public class CameraConfigurate extends HoconConfigurateFile<PowerCamera> impleme
         }
     }
 
-    @Override
-    public CompletableFuture<Void> addPoint(final CameraPoint cameraPoint) {
-        return CompletableFuture.supplyAsync(() -> {
-                    rootNode.node(cameraPoint.getCameraId()).node(CameraSerializer.POINTS); //todo
-                    return null;
-                }
-        );
-    }
 
-    @Override
-    public CompletableFuture<Void> removePoint(final String cameraId, final int pointNum) {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                rootNode.node(cameraId).node(CameraSerializer.POINTS).getList(CameraPoint.class).remove(pointNum);
-            } catch (SerializationException e) {
-                return null;
-            }
-            return null;
-        });
-
-    }
 }
