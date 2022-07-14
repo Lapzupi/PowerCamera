@@ -1,5 +1,6 @@
 package nl.svenar.powercamera.listeners;
 
+import nl.svenar.powercamera.Permissions;
 import nl.svenar.powercamera.model.Camera;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,7 +25,7 @@ public class JoinListener implements Listener {
         }
 
         final Player player = event.getPlayer();
-        if (player.hasPermission("powercamera.bypass.joincamera"))
+        if (player.hasPermission(Permissions.BYPASS_JOIN_CAMERA))
             return;
 
         final String cameraId = plugin.getConfigPlugin().getJoin().getCameraId();
