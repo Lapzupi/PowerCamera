@@ -78,7 +78,7 @@ public class CameraRunnable extends BukkitRunnable {
             player.teleport(locationsPaths.get(0));
         }
 
-        if (this.player.hasPermission("powercamera.showstartmessages"))
+        if (this.player.hasPermission(Permissions.SHOW_START_MESSAGES))
             this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera.getId() + "'!");
         return this;
     }
@@ -97,7 +97,7 @@ public class CameraRunnable extends BukkitRunnable {
         if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
             player.setInvisible(previousState.invisible());
 
-        if (this.player.hasPermission("powercamera.showstartmessages"))
+        if (this.player.hasPermission(Permissions.SHOW_START_MESSAGES))
             player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + this.camera.getId() + "' has ended!");
 
         currentCameraPointPosition = 0;

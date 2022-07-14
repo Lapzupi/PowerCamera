@@ -5,6 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import nl.svenar.powercamera.CameraRunnable;
+import nl.svenar.powercamera.Permissions;
 import nl.svenar.powercamera.managers.PlayerManager;
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
@@ -32,13 +33,13 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @HelpCommand
-    @CommandPermission("powercamera.command.help")
+    @CommandPermission(Permissions.Command.HELP)
     public void onHelp(final @NotNull CommandHelp help) {
         help.showHelp();
     }
 
     @Subcommand("reload")
-    @CommandPermission("powercamera.command.reload")
+    @CommandPermission(Permissions.Command.RELOAD)
     public void onReload() {
         for (Map.Entry<UUID, CameraRunnable> entry : plugin.getPlayerManager().getRunningTasks().entrySet()) {
             entry.getValue().stop();
@@ -48,7 +49,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("create")
-    @CommandPermission("powercamera.command.create")
+    @CommandPermission(Permissions.Command.CREATE)
     public void onCreate(final Player sender, final String cameraId) {
         if (plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sA camera with the id '%s' already exists.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
@@ -65,7 +66,7 @@ public class PowerCameraCommand extends BaseCommand {
 
     @Subcommand("remove")
     @CommandCompletion("@cameras")
-    @CommandPermission("powercamera.command.remove")
+    @CommandPermission(Permissions.Command.REMOVE)
     public void onRemove(final Player sender, final String cameraId) {
         if (!plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sA camera with the id '%s' doesn't exist.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
@@ -79,7 +80,7 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("point")
     public class PointSubCommand extends BaseCommand {
         @Subcommand("tp")
-        @CommandPermission("powercamera.command.point.tp")
+        @CommandPermission(Permissions.Command.POINT_TP)
         public void onTeleport(final @NotNull Player player, final int num) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
                 player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));
@@ -100,7 +101,7 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         @Subcommand("add")
-        @CommandPermission("powercamera.command.point.add")
+        @CommandPermission(Permissions.Command.POINT_ADD)
         public void onAdd(final @NotNull Player player, final CameraPoint.Type type, final CameraPoint.Easing easing, final Double duration) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
                 player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));
@@ -121,7 +122,7 @@ public class PowerCameraCommand extends BaseCommand {
 
         @Subcommand("delete")
         @CommandCompletion("@points")
-        @CommandPermission("powercamera.command.point.delete")
+        @CommandPermission(Permissions.Command.POINT_DELETE)
         public void onDelete(final @NotNull Player player, final int num) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
                 player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));
@@ -142,7 +143,7 @@ public class PowerCameraCommand extends BaseCommand {
 
         @Subcommand("duration|setduration")
         @CommandCompletion("@points")
-        @CommandPermission("powercamera.command.point.duration")
+        @CommandPermission(Permissions.Command.POINT_DURATION)
         public void onSetDuration(final @NotNull Player player, final int num, final Double duration) {
             if (!plugin.getPlayerManager().hasSelectedCamera(player.getUniqueId())) {
                 player.sendMessage("%sPlayer %s does not have a selected camera.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, player.getName()));
@@ -171,7 +172,7 @@ public class PowerCameraCommand extends BaseCommand {
 
     @Subcommand("select")
     @CommandCompletion("@cameras")
-    @CommandPermission("powercamera.command.select")
+    @CommandPermission(Permissions.Command.SELECT)
     public void onSelect(final Player sender, final String cameraId) {
         if (!plugin.getCameraManager().hasCamera(cameraId)) {
             sender.sendMessage("%sCamera '%s' does not exist.".formatted(plugin.getPluginChatPrefix() + ChatColor.RED, cameraId));
@@ -184,7 +185,7 @@ public class PowerCameraCommand extends BaseCommand {
 
     @Subcommand("preview")
     @CommandCompletion("@points")
-    @CommandPermission("powercamera.command.preview")
+    @CommandPermission(Permissions.Command.PREVIEW)
     public void onPreview(final @NotNull Player sender, final int point, final int previewTime) {
         if (!plugin.getPlayerManager().hasSelectedCamera(sender.getUniqueId())) {
             return;
@@ -205,7 +206,6 @@ public class PowerCameraCommand extends BaseCommand {
 
         final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
         playerManager.setRunningTask(sender.getUniqueId(), new CameraRunnable(plugin, sender, camera).preview(sender, point, previewTime));
-
     }
 
     @Subcommand("info")
@@ -249,7 +249,7 @@ public class PowerCameraCommand extends BaseCommand {
 
     @Subcommand("start")
     @CommandCompletion("@players @cameras")
-    @CommandPermission("powercamera.command.start")
+    @CommandPermission(Permissions.Command.START)
     public void onStart(final Player sender, final OnlinePlayer target, @Optional final String cameraId) {
         if (cameraId == null) {
             if (!plugin.getPlayerManager().hasSelectedCamera(target.getPlayer().getUniqueId())) {
@@ -278,7 +278,7 @@ public class PowerCameraCommand extends BaseCommand {
 
 
     @Subcommand("stop")
-    @CommandPermission("powercamera.command.stop")
+    @CommandPermission(Permissions.Command.STOP)
     public void onStop(final Player sender, final @NotNull OnlinePlayer target) {
         if (!plugin.getPlayerManager().hasRunningTask(target.getPlayer().getUniqueId())) {
             sender.sendMessage("%sPlayer %s does not have an active camera", plugin.getPluginChatPrefix() + ChatColor.RED, target.getPlayer().getName());
@@ -292,7 +292,7 @@ public class PowerCameraCommand extends BaseCommand {
     }
 
     @Subcommand("stats")
-    @CommandPermission("powercamera.command.stats")
+    @CommandPermission(Permissions.Command.STATS)
     public void onStats(final @NotNull CommandSender sender) {
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -328,7 +328,7 @@ public class PowerCameraCommand extends BaseCommand {
 
 
     @Subcommand("invisible")
-    @CommandPermission("powercamera.command.invisible")
+    @CommandPermission(Permissions.Command.INVISIBLE)
     public void onInvisible(final @NotNull Player player, final boolean invisible) {
         player.setInvisible(invisible);
     }
