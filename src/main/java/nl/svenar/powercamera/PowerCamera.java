@@ -10,6 +10,7 @@ import com.github.sarhatabaot.kraken.core.db.MySqlConnectionFactory;
 import com.github.sarhatabaot.kraken.core.db.SqlLiteConnectionFactory;
 import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
 import nl.svenar.powercamera.commands.PowerCameraCommand;
+import nl.svenar.powercamera.listeners.QuitListener;
 import nl.svenar.powercamera.managers.CameraManager;
 import nl.svenar.powercamera.managers.PlayerManager;
 import nl.svenar.powercamera.storage.CameraStorage;
@@ -73,6 +74,7 @@ public class PowerCamera extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new MoveListener(this), this);
         pluginManager.registerEvents(new JoinListener(this), this);
+        pluginManager.registerEvents(new QuitListener(getPlayerManager()),this);
     }
 
     private void initCommands() {
