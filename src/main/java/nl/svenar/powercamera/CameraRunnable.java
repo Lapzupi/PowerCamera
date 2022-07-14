@@ -16,9 +16,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 public class CameraRunnable extends BukkitRunnable {
-
     private int ticks = 0;
-
     private final PowerCamera plugin;
     private final Player player;
 
@@ -80,7 +78,7 @@ public class CameraRunnable extends BukkitRunnable {
             player.teleport(locationsPaths.get(0));
         }
 
-        if (!this.player.hasPermission("powercamera.hidestartmessages"))
+        if (this.player.hasPermission("powercamera.showstartmessages"))
             this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera.getId() + "'!");
         return this;
     }
@@ -99,7 +97,7 @@ public class CameraRunnable extends BukkitRunnable {
         if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
             player.setInvisible(previousState.invisible());
 
-        if (!this.player.hasPermission("powercamera.hidestartmessages"))
+        if (this.player.hasPermission("powercamera.showstartmessages"))
             player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "The path of camera '" + this.camera.getId() + "' has ended!");
 
         currentCameraPointPosition = 0;
