@@ -5,7 +5,7 @@ import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
 import nl.svenar.powercamera.CameraRunnable;
-import nl.svenar.powercamera.PlayerManager;
+import nl.svenar.powercamera.managers.PlayerManager;
 import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;

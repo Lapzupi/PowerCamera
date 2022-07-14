@@ -177,7 +177,7 @@
         </dependency>
         <dependency>
             <groupId>com.github.sarhatabaot</groupId>
-            <artifactId>Kraken-Core</artifactId>
+            <artifactId>KrakenCore</artifactId>
             <version>${kraken.core.version}</version>
             <scope>compile</scope>
         </dependency>

@@ -1,5 +1,6 @@
-package nl.svenar.powercamera;
+package nl.svenar.powercamera.managers;
 
+import nl.svenar.powercamera.CameraRunnable;
 import nl.svenar.powercamera.model.ViewingMode;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;

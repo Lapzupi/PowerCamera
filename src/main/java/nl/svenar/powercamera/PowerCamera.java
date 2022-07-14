@@ -10,6 +10,8 @@ import com.github.sarhatabaot.kraken.core.db.MySqlConnectionFactory;
 import com.github.sarhatabaot.kraken.core.db.SqlLiteConnectionFactory;
 import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
 import nl.svenar.powercamera.commands.PowerCameraCommand;
+import nl.svenar.powercamera.managers.CameraManager;
+import nl.svenar.powercamera.managers.PlayerManager;
 import nl.svenar.powercamera.storage.CameraStorage;
 import nl.svenar.powercamera.storage.PlayerStorage;
 import nl.svenar.powercamera.storage.configurate.CameraConfigurate;

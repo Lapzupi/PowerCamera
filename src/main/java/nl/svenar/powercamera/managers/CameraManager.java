@@ -1,9 +1,10 @@
-package nl.svenar.powercamera;
+package nl.svenar.powercamera.managers;
 
 import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
 import nl.svenar.powercamera.storage.CameraStorage;
