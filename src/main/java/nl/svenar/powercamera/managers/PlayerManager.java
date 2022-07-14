@@ -25,10 +25,8 @@ public class PlayerManager {
         this.runningTasks = new HashMap<>();
     }
 
-    @Nullable
-    //make the check before running this, perhaps we can make this optional, and check if present
     public CameraRunnable getCurrentRunningCameraTask(final UUID uuid) {
-        return runningTasks.getOrDefault(uuid,null);
+        return runningTasks.get(uuid);
     }
 
     public boolean hasRunningTask(final UUID uuid) {
@@ -61,5 +59,13 @@ public class PlayerManager {
 
     public Map<UUID, CameraRunnable> getRunningTasks() {
         return runningTasks;
+    }
+
+    public void removeSelectedCamera(final UUID uuid) {
+        selectedCamera.remove(uuid);
+    }
+
+    public void removeViewingMode(final UUID uuid) {
+        this.currentViewingMode.remove(uuid);
     }
 }
