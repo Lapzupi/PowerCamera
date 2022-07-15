@@ -1,6 +1,6 @@
 package nl.svenar.powercamera.managers;
 
-import nl.svenar.powercamera.CameraRunnable;
+import nl.svenar.powercamera.CameraRunnableView;
 import nl.svenar.powercamera.model.ViewingMode;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -16,8 +16,7 @@ import java.util.WeakHashMap;
 public class PlayerManager {
     private final Map<UUID, String> selectedCamera;
     private final Map<UUID, ViewingMode> currentViewingMode;
-
-    private final Map<UUID, CameraRunnable> runningTasks;
+    private final Map<UUID, CameraRunnableView> runningTasks;
 
     public PlayerManager() {
         this.selectedCamera = new WeakHashMap<>();
@@ -25,7 +24,7 @@ public class PlayerManager {
         this.runningTasks = new HashMap<>();
     }
 
-    public CameraRunnable getCurrentRunningCameraTask(final UUID uuid) {
+    public CameraRunnableView getCurrentRunningCameraTask(final UUID uuid) {
         return runningTasks.get(uuid);
     }
 
@@ -41,7 +40,7 @@ public class PlayerManager {
         currentViewingMode.put(uuid,mode);
     }
 
-    public void setRunningTask(final UUID uuid,final CameraRunnable runnable) {
+    public void setRunningTask(final UUID uuid,final CameraRunnableView runnable) {
         this.runningTasks.put(uuid,runnable);
     }
     @Nullable
@@ -57,7 +56,7 @@ public class PlayerManager {
         selectedCamera.put(uuid,cameraId);
     }
 
-    public Map<UUID, CameraRunnable> getRunningTasks() {
+    public Map<UUID, CameraRunnableView> getRunningTasks() {
         return runningTasks;
     }
 

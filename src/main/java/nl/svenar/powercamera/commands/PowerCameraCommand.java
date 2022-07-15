@@ -4,7 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
 import co.aikar.commands.bukkit.contexts.OnlinePlayer;
-import nl.svenar.powercamera.CameraRunnable;
+import nl.svenar.powercamera.CameraRunnableView;
 import nl.svenar.powercamera.Permissions;
 import nl.svenar.powercamera.managers.PlayerManager;
 import nl.svenar.powercamera.PowerCamera;
@@ -41,7 +41,7 @@ public class PowerCameraCommand extends BaseCommand {
     @Subcommand("reload")
     @CommandPermission(Permissions.Command.RELOAD)
     public void onReload() {
-        for (Map.Entry<UUID, CameraRunnable> entry : plugin.getPlayerManager().getRunningTasks().entrySet()) {
+        for (Map.Entry<UUID, CameraRunnableView> entry : plugin.getPlayerManager().getRunningTasks().entrySet()) {
             entry.getValue().stop();
         }
         this.plugin.getConfigPlugin().reloadConfig();
@@ -205,7 +205,7 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
-        playerManager.setRunningTask(sender.getUniqueId(), new CameraRunnable(plugin, sender, camera).preview(sender, point, previewTime));
+        playerManager.setRunningTask(sender.getUniqueId(), new CameraRunnableView(plugin, sender, camera).preview(sender, point, previewTime));
     }
 
     @Subcommand("info")
@@ -262,7 +262,7 @@ public class PowerCameraCommand extends BaseCommand {
             }
 
             final Camera camera = plugin.getCameraManager().getCamera(selectedCameraId);
-            CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
+            CameraRunnableView runnable = new CameraRunnableView(plugin, target.getPlayer(), camera);
             plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
             return;
         }
@@ -272,7 +272,7 @@ public class PowerCameraCommand extends BaseCommand {
         }
 
         final Camera camera = plugin.getCameraManager().getCamera(cameraId);
-        CameraRunnable runnable = new CameraRunnable(plugin, target.getPlayer(), camera);
+        CameraRunnableView runnable = new CameraRunnableView(plugin, target.getPlayer(), camera);
         plugin.getPlayerManager().setRunningTask(target.getPlayer().getUniqueId(), runnable.start());
     }
 
@@ -285,7 +285,7 @@ public class PowerCameraCommand extends BaseCommand {
             return;
         }
 
-        CameraRunnable task = plugin.getPlayerManager().getCurrentRunningCameraTask(target.getPlayer().getUniqueId());
+        CameraRunnableView task = plugin.getPlayerManager().getCurrentRunningCameraTask(target.getPlayer().getUniqueId());
         if (task != null && !task.isCancelled()) {
             task.stop();
         }

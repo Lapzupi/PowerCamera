@@ -1,21 +1,30 @@
-package nl.svenar.powercamera;
+package nl.svenar.powercamera.runnables;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import nl.svenar.powercamera.CameraRunnableView;
+import nl.svenar.powercamera.Permissions;
+import nl.svenar.powercamera.PowerCamera;
 import nl.svenar.powercamera.model.Camera;
 import nl.svenar.powercamera.model.CameraPoint;
 import nl.svenar.powercamera.model.PreviousState;
-import org.bukkit.*;
+import nl.svenar.powercamera.model.ViewingMode;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
-
-import nl.svenar.powercamera.model.ViewingMode;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class CameraRunnable extends BukkitRunnable {
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * @author sarhatabaot
+ */
+public abstract class CameraRunnable extends BukkitRunnable {
     private int ticks = 0;
     private final PowerCamera plugin;
     private final Player player;
@@ -62,25 +71,6 @@ public class CameraRunnable extends BukkitRunnable {
 
     private double calculateProgress(double firstPoint, double lastPoint, int subPointPosition, int maxSubPoints) {
         return firstPoint + ((double) subPointPosition / (double) maxSubPoints) * (lastPoint - firstPoint);
-    }
-
-    public CameraRunnable start() {
-        this.previousState = PreviousState.fromPlayer(player);
-
-        if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
-            player.setGameMode(GameMode.SPECTATOR);
-        if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
-            player.setInvisible(true);
-
-        this.plugin.getPlayerManager().setViewingMode(this.player.getUniqueId(), ViewingMode.VIEW);
-        runTaskTimer(this.plugin, 1L, 1L);
-        if (!locationsPaths.isEmpty()) {
-            player.teleport(locationsPaths.get(0));
-        }
-
-        if (this.player.hasPermission(Permissions.SHOW_START_MESSAGES))
-            this.player.sendMessage(this.plugin.getPluginChatPrefix() + ChatColor.GREEN + "Viewing the path of camera '" + this.camera.getId() + "'!");
-        return this;
     }
 
     public void stop() {
@@ -160,38 +150,6 @@ public class CameraRunnable extends BukkitRunnable {
     }
     private double calcPointPortionOfTotalDuration(double duration, double total) {
         return duration / total;
-    }
-    public CameraRunnable preview(Player player, int num, int previewTime) {
-        List<CameraPoint> cameraPoints = new ArrayList<>(camera.getPoints());
-        cameraPoints.forEach(cameraPoint -> cameraPoint.setDuration(calcPointPortionOfTotalDuration(cameraPoint.getDuration(),camera.getTotalDuration()) * previewTime));
-
-        this.locationsPaths = generatePath(cameraPoints);
-        currentCameraPointPosition = num;
-
-        if (num < 0)
-            num = 0;
-
-        if (num > cameraPoints.size() - 1)
-            num = cameraPoints.size() - 1;
-
-
-        player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Preview started of point " + num  + "!");
-        player.sendMessage(plugin.getPluginChatPrefix() + ChatColor.GREEN + "Ending in " + previewTime + " seconds.");
-        player.sendMessage(cameraPoints.stream().map(CameraPoint::toString).collect(Collectors.joining(",")));
-
-        this.previousState = PreviousState.fromPlayer(player);
-
-        final Location startingPoint = cameraPoints.get(num).getLocation();
-
-        plugin.getPlayerManager().setViewingMode(player.getUniqueId(), ViewingMode.PREVIEW);
-        if (this.plugin.getConfigPlugin().getCameraEffects().isSpectator())
-            player.setGameMode(GameMode.SPECTATOR);
-        if (this.plugin.getConfigPlugin().getCameraEffects().isInvisible())
-            player.setInvisible(true);
-        player.teleport(startingPoint);
-
-        runTaskLater(this.plugin, previewTime * 20L);
-        return this;
     }
 
     public Camera getCamera() {

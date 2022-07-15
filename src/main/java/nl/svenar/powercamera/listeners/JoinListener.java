@@ -8,7 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import nl.svenar.powercamera.CameraRunnable;
+import nl.svenar.powercamera.CameraRunnableView;
 import nl.svenar.powercamera.PowerCamera;
 
 public class JoinListener implements Listener {
@@ -34,6 +34,6 @@ public class JoinListener implements Listener {
         }
 
         final Camera camera = plugin.getCameraManager().getCamera(cameraId);
-        this.plugin.getPlayerManager().setRunningTask(player.getUniqueId(),new CameraRunnable(plugin, player, camera).start());
+        this.plugin.getPlayerManager().setRunningTask(player.getUniqueId(),new CameraRunnableView(plugin, player, camera).start());
     }
 }
