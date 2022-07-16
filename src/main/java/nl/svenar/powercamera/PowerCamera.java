@@ -1,5 +1,8 @@
 package nl.svenar.powercamera;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +108,7 @@ public class PowerCamera extends JavaPlugin {
                 ConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
                 this.cameraStorage = new CameraSql(connectionFactory);
                 this.playerStorage = new PlayerSql(connectionFactory);
+                enableForeignKeys(connectionFactory);
             }
             //hocon
             default -> {
@@ -118,6 +122,16 @@ public class PowerCamera extends JavaPlugin {
 
         }
 
+    }
+
+    private void enableForeignKeys(final ConnectionFactory<PowerCamera> connectionFactory) {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement preparedStatement = connection.prepareStatement("PRAGMA foreign_keys = ON;")) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            LoggerUtil.logSevereException(e);
+        }
     }
 
     @Override
