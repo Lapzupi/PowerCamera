@@ -22,7 +22,7 @@ public class CameraRunnable extends BukkitRunnable {
 
     //Camera Stuff
     private final Camera camera;
-    private ArrayList<Location> locationsPaths;
+    private List<Location> locationsPaths;
 
     private int currentCameraPointPosition = 0;
 
@@ -35,7 +35,7 @@ public class CameraRunnable extends BukkitRunnable {
         this.camera = camera;
 
 
-        this.locationsPaths = generatePath(camera.getPoints());
+        this.locationsPaths = plugin.getCameraManager().getLocationPath(camera.getId());
     }
 
     //Calculate the maximum amount of points between 2 points in duration

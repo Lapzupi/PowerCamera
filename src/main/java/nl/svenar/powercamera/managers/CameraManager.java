@@ -56,7 +56,7 @@ public class CameraManager {
         return CacheBuilder.newBuilder()
                 .build(new CacheLoader<>() {
                     @Override
-                    public List<Location> load(final @NotNull String key) throws Exception {
+                    public @NotNull List<Location> load(final @NotNull String key) throws Exception {
                         plugin.getLogger().info("%s Loaded %s into cache".formatted(CameraManager.class, key));
                         return generatePath(cameraStorage.getCamera(key).get(30, TimeUnit.SECONDS).getPoints());
                     }
@@ -74,6 +74,19 @@ public class CameraManager {
             plugin.getLogger().severe(e.getMessage());
             return null;
         }
+    }
+
+    public List<Location> getLocationPath(final String cameraId) {
+        try {
+            return pathCache.get(cameraId);
+        }catch (ExecutionException e) {
+            plugin.getLogger().severe(e.getMessage());
+            return null;
+        }
+    }
+
+    public int getTotalAmountCameras() {
+        return (int) cameraCache.size();
     }
 
     public boolean hasCamera(final String id) {

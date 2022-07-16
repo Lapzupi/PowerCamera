@@ -306,7 +306,7 @@ public class PowerCameraCommand extends BaseCommand {
         sender.sendMessage(ChatColor.DARK_GREEN + "Java version: " + ChatColor.GREEN + System.getProperty("java.version"));
         sender.sendMessage(ChatColor.DARK_GREEN + plugin.getDescription().getName() + " Version: " + ChatColor.GREEN + plugin.getDescription().getVersion());
         sender.sendMessage(ChatColor.DARK_GREEN + "Plugin uptime: " + ChatColor.GREEN + format.format(Duration.between(plugin.getStartTime(), currentTime).toMillis()));
-        sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getCameraStorage().getTotalAmountCameras());
+        sender.sendMessage(ChatColor.DARK_GREEN + "Registered cameras: " + ChatColor.GREEN + plugin.getCameraManager().getTotalAmountCameras());
         sender.sendMessage(ChatColor.DARK_GREEN + "Invisibility mode: " + ChatColor.GREEN + invisibilityMode);
         sender.sendMessage(ChatColor.BLUE + "===" + ChatColor.DARK_AQUA + "-------------------------------" + ChatColor.BLUE + "===");
     }
