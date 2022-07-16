@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import co.aikar.commands.PaperCommandManager;
 import com.github.sarhatabaot.kraken.core.db.ConnectionFactory;
+import com.github.sarhatabaot.kraken.core.db.HikariConnectionFactory;
 import com.github.sarhatabaot.kraken.core.db.MySqlConnectionFactory;
 import com.github.sarhatabaot.kraken.core.db.SqlLiteConnectionFactory;
 import com.github.sarhatabaot.kraken.core.logging.LoggerUtil;
@@ -31,6 +33,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import nl.svenar.powercamera.config.PluginConfig;
 import nl.svenar.powercamera.listeners.JoinListener;
 import nl.svenar.powercamera.listeners.MoveListener;
+import org.flywaydb.core.Flyway;
+import org.flywaydb.core.api.FlywayException;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.configurate.ConfigurateException;
 
@@ -100,12 +104,16 @@ public class PowerCamera extends JavaPlugin {
         String databaseType = pluginConfig.getDatabase().getType();
         switch (databaseType) {
             case "sql" -> {
-                ConnectionFactory<PowerCamera> connectionFactory = new MySqlConnectionFactory<>("powercamera-hikari");
+                HikariConnectionFactory<PowerCamera> connectionFactory = new MySqlConnectionFactory<>("powercamera-hikari");
+                connectionFactory.init(this,pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), pluginConfig.getDatabase().getUsername(),pluginConfig.getDatabase().getPassword());
+                initFlyway(connectionFactory);
                 this.cameraStorage = new CameraSql(connectionFactory);
                 this.playerStorage = new PlayerSql(connectionFactory);
             }
             case "sqlite" -> {
-                ConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
+                HikariConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
+                connectionFactory.init(this,pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), pluginConfig.getDatabase().getUsername(),pluginConfig.getDatabase().getPassword());
+                initFlyway(connectionFactory);
                 this.cameraStorage = new CameraSql(connectionFactory);
                 this.playerStorage = new PlayerSql(connectionFactory);
                 enableForeignKeys(connectionFactory);
@@ -121,7 +129,22 @@ public class PowerCamera extends JavaPlugin {
             }
 
         }
+    }
 
+    private void initFlyway(@NotNull HikariConnectionFactory<PowerCamera> connectionFactory) {
+        Flyway flyway = Flyway.configure(getClass().getClassLoader())
+                .dataSource(connectionFactory.getDataSource())
+                .baselineVersion("1")
+                .baselineOnMigrate(true)
+                .locations("classpath:db/base")
+                .load();
+
+        try {
+            flyway.migrate();
+        } catch (FlywayException e) {
+            LoggerUtil.logSevereException(e);
+            getLogger().severe(() -> "There was a problem migrating to the latest database version. You may experience issues.");
+        }
     }
 
     private void enableForeignKeys(final ConnectionFactory<PowerCamera> connectionFactory) {
