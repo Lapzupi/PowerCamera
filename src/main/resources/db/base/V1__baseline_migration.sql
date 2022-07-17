@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS powercamera_cameras (
     total_duration      DOUBLE      NOT NULL,
     return_to_origin    BOOLEAN     NOT NULL DEFAULT 1,
     PRIMARY KEY(id)
-) DEFAULT CHARSET = utf8mb4;
+);
 
 CREATE TABLE IF NOT EXISTS powercamera_points (
     num                INT AUTO_INCREMENT  NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS powercamera_points (
     pitch              INT NOT NULL,
     PRIMARY KEY (num),
     FOREIGN KEY (camera_id) REFERENCES powercamera_cameras(id)
-) DEFAULT CHARSET = utf8mb4;
+);
 
 CREATE TABLE IF NOT EXISTS powercamera_players (
     id                 INT AUTO_INCREMENT  NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS powercamera_players (
     camera_id          VARCHAR(16)         NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (camera_id) REFERENCES powercamera_cameras(id)
-) DEFAULT CHARSET = utf8mb4;
+);
 
 
 CREATE TABLE IF NOT EXISTS powercamera_commands_start (
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS powercamera_commands_start (
     PRIMARY KEY (id),
     FOREIGN KEY (camera_id) REFERENCES powercamera_cameras(id),
     FOREIGN KEY (point_num) REFERENCES powercamera_points(num)
-) DEFAULT CHARSET = utf8mb4;
+);
 
 CREATE TABLE IF NOT EXISTS powercamera_commands_end (
     id                 INT AUTO_INCREMENT NOT NULL,
@@ -51,4 +51,4 @@ CREATE TABLE IF NOT EXISTS powercamera_commands_end (
     PRIMARY KEY (id),
     FOREIGN KEY (camera_id) REFERENCES powercamera_cameras(id),
     FOREIGN KEY (point_num) REFERENCES powercamera_points(num)
-) DEFAULT CHARSET = utf8mb4;
+);
