@@ -157,19 +157,19 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Void> createCamera(final String cameraId) {
-        return CompletableFuture.supplyAsync(() -> {
-            ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
-                @Override
-                protected void onRunUpdate(final @NotNull DSLContext dslContext) {
-                    dslContext.insertInto(PowercameraCameras.POWERCAMERA_CAMERAS)
-                            .set(PowercameraCameras.POWERCAMERA_CAMERAS.ID, cameraId)
-                            .executeAsync(); //todo test
-                }
-            };
-            executeUpdate.executeUpdate();
-            return null;
-        }
-        );
+        ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
+            @Override
+            protected void onRunUpdate(final @NotNull DSLContext dslContext) {
+                dslContext.insertInto(PowercameraCameras.POWERCAMERA_CAMERAS)
+                        .set(PowercameraCameras.POWERCAMERA_CAMERAS.ID, cameraId)
+                        .set(PowercameraCameras.POWERCAMERA_CAMERAS.ALIAS, cameraId)
+                        .set(PowercameraCameras.POWERCAMERA_CAMERAS.RETURN_TO_ORIGIN, true)
+                        .set(PowercameraCameras.POWERCAMERA_CAMERAS.TOTAL_DURATION, 60D)
+                        .execute();
+            }
+        };
+        executeUpdate.executeUpdate();
+        return null;
     }
 
     @Override
@@ -191,7 +191,24 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Void> addPoint(final CameraPoint cameraPoint) {
-        return null;
+        ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
+            @Override
+            protected void onRunUpdate(final DSLContext dslContext) {
+                dslContext.insertInto(PowercameraPoints.POWERCAMERA_POINTS)
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID,cameraPoint.getCameraId())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.TYPE, cameraPoint.getType().name())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.EASING, cameraPoint.getEasing().name())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.DURATION,cameraPoint.getDuration())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.X, cameraPoint.getLocation().getX())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.Y, cameraPoint.getLocation().getY())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.Z, cameraPoint.getLocation().getZ())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.PITCH, (double) cameraPoint.getLocation().getPitch())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.YAW, (double) cameraPoint.getLocation().getYaw())
+                        .execute();
+            }
+        };
+        executeUpdate.executeUpdate();
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
@@ -289,16 +306,16 @@ public class CameraSql implements CameraStorage {
     }
 
     private @NotNull CameraPoint getPointFromRecord(final String cameraId, final @NotNull Record recordResult) {
-        int x = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.X);
-        int y = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.Y);
-        int z = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.Z);
-        int yaw = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.YAW);
-        int pitch = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.PITCH);
+        double x = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.X);
+        double y = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.Y);
+        double z = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.Z);
+        double yaw = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.YAW);
+        double pitch = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.PITCH);
         double duration = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.DURATION);
         CameraPoint.Easing easing = CameraPoint.Easing.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.EASING));
         CameraPoint.Type type = CameraPoint.Type.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.TYPE));
         World world = Bukkit.getWorld(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.WORLD_NAME));
-        final Location location = new Location(world, x, y, z, yaw,pitch);
+        final Location location = new Location(world, x, y, z, (float) yaw, (float) pitch);
 
 
         //todo add commands

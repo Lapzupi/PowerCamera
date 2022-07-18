@@ -87,27 +87,27 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
     /**
      * The column <code>POWERCAMERA_POINTS.X</code>.
      */
-    public final TableField<PowercameraPointsRecord, Integer> X = createField(DSL.name("X"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, Double> X = createField(DSL.name("X"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.Y</code>.
      */
-    public final TableField<PowercameraPointsRecord, Integer> Y = createField(DSL.name("Y"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, Double> Y = createField(DSL.name("Y"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.Z</code>.
      */
-    public final TableField<PowercameraPointsRecord, Integer> Z = createField(DSL.name("Z"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, Double> Z = createField(DSL.name("Z"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.YAW</code>.
      */
-    public final TableField<PowercameraPointsRecord, Integer> YAW = createField(DSL.name("YAW"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, Double> YAW = createField(DSL.name("YAW"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.PITCH</code>.
      */
-    public final TableField<PowercameraPointsRecord, Integer> PITCH = createField(DSL.name("PITCH"), SQLDataType.INTEGER.nullable(false), this, "");
+    public final TableField<PowercameraPointsRecord, Double> PITCH = createField(DSL.name("PITCH"), SQLDataType.DOUBLE.nullable(false), this, "");
 
     private PowercameraPoints(Name alias, Table<PowercameraPointsRecord> aliased) {
         this(alias, aliased, null);
@@ -227,14 +227,14 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Integer, String, String, Double, String, String, Integer, Integer, Integer, Integer, Integer> fieldsRow() {
+    public Row11<Integer, String, String, Double, String, String, Double, Double, Double, Double, Double> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Double, ? super Double, ? super Double, ? super Double, ? super Double, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -242,7 +242,7 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Double, ? super Double, ? super Double, ? super Double, ? super Double, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

@@ -69,8 +69,15 @@ public class CameraManager {
 
     public Camera getCamera(final String id) {
         try {
-            return cameraCache.get(id);
-        } catch (ExecutionException e){
+            Camera camera = cameraCache.getIfPresent(id);
+
+            if(camera == null) {
+                camera = cameraStorage.getCamera(id).get();
+                cameraCache.put(id,camera);
+            }
+
+            return camera;
+        } catch (ExecutionException | InterruptedException e){
             plugin.getLogger().severe(e.getMessage());
             return null;
         }

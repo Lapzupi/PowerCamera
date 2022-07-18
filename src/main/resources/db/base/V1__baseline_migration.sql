@@ -13,11 +13,11 @@ CREATE TABLE IF NOT EXISTS powercamera_points (
     duration           DOUBLE              NOT NULL,
     type               VARCHAR(9)          CHECK(type = 'MOVE' OR type = 'TELEPORT' OR type = 'NONE'),
     easing             VARCHAR(6)          CHECK(easing = 'LINEAR' OR easing = 'NONE'),
-    x                  INT NOT NULL,
-    y                  INT NOT NULL,
-    z                  INT NOT NULL,
-    yaw                INT NOT NULL,
-    pitch              INT NOT NULL,
+    x                  DOUBLE NOT NULL,
+    y                  DOUBLE NOT NULL,
+    z                  DOUBLE NOT NULL,
+    yaw                DOUBLE NOT NULL,
+    pitch              DOUBLE NOT NULL,
     PRIMARY KEY (num),
     FOREIGN KEY (camera_id) REFERENCES powercamera_cameras(id)
 );
