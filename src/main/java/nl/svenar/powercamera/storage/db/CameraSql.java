@@ -49,7 +49,7 @@ public class CameraSql implements CameraStorage {
                         .from(PowercameraCameras.POWERCAMERA_CAMERAS)
                         .where(PowercameraCameras.POWERCAMERA_CAMERAS.ID.eq(cameraId))
                         .fetchOne();
-                if(recordResult == null) {
+                if (recordResult == null) {
                     return empty();
                 }
                 return getQuery(recordResult);
@@ -62,7 +62,7 @@ public class CameraSql implements CameraStorage {
                 final double totalDuration = result.getValue(PowercameraCameras.POWERCAMERA_CAMERAS.TOTAL_DURATION);
                 final boolean returnToOrigin = result.getValue(PowercameraCameras.POWERCAMERA_CAMERAS.RETURN_TO_ORIGIN);
                 final List<CameraPoint> cameraPoints = getCameraPoints(cameraId).get();
-                return new Camera(cameraId,alias,cameraPoints,totalDuration, returnToOrigin);
+                return new Camera(cameraId, alias, cameraPoints, totalDuration, returnToOrigin);
             }
 
             @Contract(pure = true)
@@ -76,7 +76,7 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Boolean> hasCamera(final String cameraId) {
-        ExecuteQuery<Boolean,Record,PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
+        ExecuteQuery<Boolean, Record, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
             @Override
             public @NotNull Boolean onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
                 return dslContext.fetchExists(PowercameraCameras.POWERCAMERA_CAMERAS.where(PowercameraCameras.POWERCAMERA_CAMERAS.ID.eq(cameraId)));
@@ -109,7 +109,7 @@ public class CameraSql implements CameraStorage {
                         .and(PowercameraPoints.POWERCAMERA_POINTS.NUM.eq(num))
                         .fetchOne();
 
-                if(result == null)
+                if (result == null)
                     return empty();
 
                 return getQuery(result);
@@ -118,7 +118,7 @@ public class CameraSql implements CameraStorage {
             @Contract(pure = true)
             @Override
             public @NotNull CameraPoint getQuery(@NotNull final Record result) throws Exception {
-                return getPointFromRecord(cameraId,result);
+                return getPointFromRecord(cameraId, result);
             }
 
             @Contract(pure = true)
@@ -136,8 +136,8 @@ public class CameraSql implements CameraStorage {
             @Override
             public @NotNull Boolean onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
                 return dslContext.fetchExists(PowercameraPoints.POWERCAMERA_POINTS
-                                .where(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID.eq(cameraId)
-                                        .and(PowercameraPoints.POWERCAMERA_POINTS.NUM.eq(num))));
+                        .where(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID.eq(cameraId)
+                                .and(PowercameraPoints.POWERCAMERA_POINTS.NUM.eq(num))));
             }
 
             @Contract(pure = true)
@@ -174,19 +174,16 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Void> deleteCamera(final String cameraId) {
-        return CompletableFuture.supplyAsync(() -> {
-                    ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
-                        @Override
-                        protected void onRunUpdate(final @NotNull DSLContext dslContext) {
-                            dslContext.deleteFrom(PowercameraCameras.POWERCAMERA_CAMERAS)
-                                    .where(PowercameraCameras.POWERCAMERA_CAMERAS.ID.eq(cameraId))
-                                    .executeAsync();
-                        }
-                    };
-                    executeUpdate.executeUpdate();
-                    return null;
-                }
-        );
+        ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
+            @Override
+            protected void onRunUpdate(final @NotNull DSLContext dslContext) {
+                dslContext.deleteFrom(PowercameraCameras.POWERCAMERA_CAMERAS)
+                        .where(PowercameraCameras.POWERCAMERA_CAMERAS.ID.eq(cameraId))
+                        .executeAsync();
+            }
+        };
+        executeUpdate.executeUpdate();
+        return null;
     }
 
     @Override
@@ -195,10 +192,10 @@ public class CameraSql implements CameraStorage {
             @Override
             protected void onRunUpdate(final DSLContext dslContext) {
                 dslContext.insertInto(PowercameraPoints.POWERCAMERA_POINTS)
-                        .set(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID,cameraPoint.getCameraId())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID, cameraPoint.getCameraId())
                         .set(PowercameraPoints.POWERCAMERA_POINTS.TYPE, cameraPoint.getType().name())
                         .set(PowercameraPoints.POWERCAMERA_POINTS.EASING, cameraPoint.getEasing().name())
-                        .set(PowercameraPoints.POWERCAMERA_POINTS.DURATION,cameraPoint.getDuration())
+                        .set(PowercameraPoints.POWERCAMERA_POINTS.DURATION, cameraPoint.getDuration())
                         .set(PowercameraPoints.POWERCAMERA_POINTS.X, cameraPoint.getLocation().getX())
                         .set(PowercameraPoints.POWERCAMERA_POINTS.Y, cameraPoint.getLocation().getY())
                         .set(PowercameraPoints.POWERCAMERA_POINTS.Z, cameraPoint.getLocation().getZ())
@@ -213,7 +210,17 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Void> removePoint(final String cameraId, final int pointNum) {
-        return null;
+        ExecuteUpdate<PowerCamera> executeUpdate = new ExecuteUpdate<>(connectionFactory) {
+            @Override
+            protected void onRunUpdate(final DSLContext dslContext) {
+                dslContext.deleteFrom(PowercameraPoints.POWERCAMERA_POINTS)
+                        .where(PowercameraPoints.POWERCAMERA_POINTS.NUM.eq(pointNum))
+                        .and(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID.eq(cameraId))
+                        .execute();
+            }
+        };
+        executeUpdate.executeUpdate();
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
@@ -230,7 +237,7 @@ public class CameraSql implements CameraStorage {
             @Override
             public @NotNull Set<String> getQuery(@NotNull final Result<Record> result) throws Exception {
                 Set<String> idSet = new HashSet<>();
-                for(Record recordResult: result) {
+                for (Record recordResult : result) {
                     idSet.add(recordResult.getValue(PowercameraCameras.POWERCAMERA_CAMERAS.ID));
                 }
                 return idSet;
@@ -247,7 +254,7 @@ public class CameraSql implements CameraStorage {
 
     @Override
     public CompletableFuture<Integer> getTotalAmountCameras() {
-        ExecuteQuery<Integer,Record, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
+        ExecuteQuery<Integer, Record, PowerCamera> executeQuery = new ExecuteQuery<>(connectionFactory) {
             @Override
             public Integer onRunQuery(final @NotNull DSLContext dslContext) throws Exception {
                 return dslContext.selectCount()
@@ -280,7 +287,7 @@ public class CameraSql implements CameraStorage {
                         .from(PowercameraPoints.POWERCAMERA_POINTS)
                         .where(PowercameraPoints.POWERCAMERA_POINTS.CAMERA_ID.eq(cameraId)).fetch();
 
-                if(result.isEmpty())
+                if (result.isEmpty())
                     return empty();
 
                 return getQuery(result);
@@ -290,8 +297,8 @@ public class CameraSql implements CameraStorage {
             @Override
             public @NotNull List<CameraPoint> getQuery(@NotNull final Result<Record> result) throws Exception {
                 List<CameraPoint> cameraPoints = new ArrayList<>();
-                for(Record recordResult: result) {
-                    cameraPoints.add(getPointFromRecord(cameraId,recordResult));
+                for (Record recordResult : result) {
+                    cameraPoints.add(getPointFromRecord(cameraId, recordResult));
                 }
                 return cameraPoints;
             }
@@ -319,7 +326,7 @@ public class CameraSql implements CameraStorage {
 
 
         //todo add commands
-        return new CameraPoint(cameraId,type,easing,duration,location);
+        return new CameraPoint(cameraId, type, easing, duration, location);
     }
 
     @Override
@@ -332,7 +339,7 @@ public class CameraSql implements CameraStorage {
                         .where(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.CAMERA_ID.eq(cameraId))
                         .and(PowercameraCommandsStart.POWERCAMERA_COMMANDS_START.POINT_NUM.eq(pointNum))
                         .fetch();
-                if(result.isEmpty())
+                if (result.isEmpty())
                     return empty();
                 return getQuery(result);
             }
@@ -362,7 +369,7 @@ public class CameraSql implements CameraStorage {
                         .where(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END.CAMERA_ID.eq(cameraId))
                         .and(PowercameraCommandsEnd.POWERCAMERA_COMMANDS_END.POINT_NUM.eq(pointNum))
                         .fetch();
-                if(result.isEmpty())
+                if (result.isEmpty())
                     return empty();
                 return getQuery(result);
             }
