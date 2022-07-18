@@ -10,10 +10,9 @@ import java.util.function.Function;
 
 import nl.svenar.powercamera.storage.generated.DefaultSchema;
 import nl.svenar.powercamera.storage.generated.Keys;
-import nl.svenar.powercamera.storage.generated.enums.PowercameraPointsEasing;
-import nl.svenar.powercamera.storage.generated.enums.PowercameraPointsType;
 import nl.svenar.powercamera.storage.generated.tables.records.PowercameraPointsRecord;
 
+import org.jooq.Check;
 import org.jooq.Field;
 import org.jooq.ForeignKey;
 import org.jooq.Function11;
@@ -29,6 +28,7 @@ import org.jooq.TableField;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -77,12 +77,12 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
     /**
      * The column <code>POWERCAMERA_POINTS.TYPE</code>.
      */
-    public final TableField<PowercameraPointsRecord, PowercameraPointsType> TYPE = createField(DSL.name("TYPE"), SQLDataType.VARCHAR.asEnumDataType(nl.svenar.powercamera.storage.generated.enums.PowercameraPointsType.class), this, "");
+    public final TableField<PowercameraPointsRecord, String> TYPE = createField(DSL.name("TYPE"), SQLDataType.VARCHAR(9), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.EASING</code>.
      */
-    public final TableField<PowercameraPointsRecord, PowercameraPointsEasing> EASING = createField(DSL.name("EASING"), SQLDataType.VARCHAR.asEnumDataType(nl.svenar.powercamera.storage.generated.enums.PowercameraPointsEasing.class), this, "");
+    public final TableField<PowercameraPointsRecord, String> EASING = createField(DSL.name("EASING"), SQLDataType.VARCHAR(6), this, "");
 
     /**
      * The column <code>POWERCAMERA_POINTS.X</code>.
@@ -154,12 +154,12 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
 
     @Override
     public UniqueKey<PowercameraPointsRecord> getPrimaryKey() {
-        return Keys.CONSTRAINT_9;
+        return Keys.CONSTRAINT_994;
     }
 
     @Override
     public List<ForeignKey<PowercameraPointsRecord, ?>> getReferences() {
-        return Arrays.asList(Keys.CONSTRAINT_99);
+        return Arrays.asList(Keys.CONSTRAINT_9944);
     }
 
     private transient PowercameraCameras _powercameraCameras;
@@ -170,9 +170,17 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
      */
     public PowercameraCameras powercameraCameras() {
         if (_powercameraCameras == null)
-            _powercameraCameras = new PowercameraCameras(this, Keys.CONSTRAINT_99);
+            _powercameraCameras = new PowercameraCameras(this, Keys.CONSTRAINT_9944);
 
         return _powercameraCameras;
+    }
+
+    @Override
+    public List<Check<PowercameraPointsRecord>> getChecks() {
+        return Arrays.asList(
+            Internal.createCheck(this, DSL.name("CONSTRAINT_9"), "\"TYPE\" IN('MOVE', 'TELEPORT', 'NONE')", true),
+            Internal.createCheck(this, DSL.name("CONSTRAINT_99"), "\"EASING\" IN('LINEAR', 'NONE')", true)
+        );
     }
 
     @Override
@@ -219,14 +227,14 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row11<Integer, String, String, Double, PowercameraPointsType, PowercameraPointsEasing, Integer, Integer, Integer, Integer, Integer> fieldsRow() {
+    public Row11<Integer, String, String, Double, String, String, Integer, Integer, Integer, Integer, Integer> fieldsRow() {
         return (Row11) super.fieldsRow();
     }
 
     /**
      * Convenience mapping calling {@link SelectField#convertFrom(Function)}.
      */
-    public <U> SelectField<U> mapping(Function11<? super Integer, ? super String, ? super String, ? super Double, ? super PowercameraPointsType, ? super PowercameraPointsEasing, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
         return convertFrom(Records.mapping(from));
     }
 
@@ -234,7 +242,7 @@ public class PowercameraPoints extends TableImpl<PowercameraPointsRecord> {
      * Convenience mapping calling {@link SelectField#convertFrom(Class,
      * Function)}.
      */
-    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super String, ? super String, ? super Double, ? super PowercameraPointsType, ? super PowercameraPointsEasing, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
+    public <U> SelectField<U> mapping(Class<U> toType, Function11<? super Integer, ? super String, ? super String, ? super Double, ? super String, ? super String, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? super Integer, ? extends U> from) {
         return convertFrom(toType, Records.mapping(from));
     }
 }

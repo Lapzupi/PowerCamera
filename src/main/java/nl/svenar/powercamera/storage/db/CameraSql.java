@@ -295,10 +295,11 @@ public class CameraSql implements CameraStorage {
         int yaw = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.YAW);
         int pitch = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.PITCH);
         double duration = recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.DURATION);
-        CameraPoint.Easing easing = CameraPoint.Easing.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.EASING).getLiteral());
-        CameraPoint.Type type = CameraPoint.Type.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.TYPE).getLiteral());
+        CameraPoint.Easing easing = CameraPoint.Easing.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.EASING));
+        CameraPoint.Type type = CameraPoint.Type.valueOf(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.TYPE));
         World world = Bukkit.getWorld(recordResult.getValue(PowercameraPoints.POWERCAMERA_POINTS.WORLD_NAME));
         final Location location = new Location(world, x, y, z, yaw,pitch);
+
 
         //todo add commands
         return new CameraPoint(cameraId,type,easing,duration,location);

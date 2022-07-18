@@ -1,12 +1,14 @@
 package nl.svenar.powercamera;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import co.aikar.commands.PaperCommandManager;
 import com.github.sarhatabaot.kraken.core.db.ConnectionFactory;
@@ -81,7 +83,7 @@ public class PowerCamera extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(new MoveListener(this), this);
         pluginManager.registerEvents(new JoinListener(this), this);
-        pluginManager.registerEvents(new QuitListener(getPlayerManager()),this);
+        pluginManager.registerEvents(new QuitListener(getPlayerManager()), this);
     }
 
     private void initCommands() {
@@ -103,31 +105,44 @@ public class PowerCamera extends JavaPlugin {
     private void initStorage() {
         String databaseType = pluginConfig.getDatabase().getType();
         switch (databaseType) {
-            case "sql" -> {
-                HikariConnectionFactory<PowerCamera> connectionFactory = new MySqlConnectionFactory<>("powercamera-hikari");
-                connectionFactory.init(this,pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), pluginConfig.getDatabase().getUsername(),pluginConfig.getDatabase().getPassword());
-                initFlyway(connectionFactory);
-                this.cameraStorage = new CameraSql(connectionFactory);
-                this.playerStorage = new PlayerSql(connectionFactory);
-            }
-            case "sqlite" -> {
-                HikariConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
-                connectionFactory.init(this,pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), pluginConfig.getDatabase().getUsername(),pluginConfig.getDatabase().getPassword());
-                initFlyway(connectionFactory);
-                this.cameraStorage = new CameraSql(connectionFactory);
-                this.playerStorage = new PlayerSql(connectionFactory);
-                enableForeignKeys(connectionFactory);
-            }
-            //hocon
-            default -> {
-                try {
-                    this.cameraStorage = new CameraConfigurate(this);
-                    this.playerStorage = new PlayersConfigurate(this);
-                } catch (ConfigurateException e) {
-                    LoggerUtil.logSevereException(e);
-                }
-            }
+            case "mysql" -> initMySql();
+            case "sqlite" -> initSqlite();
+            default -> initHocon();
+        }
+    }
 
+    private void initSqlite() {
+        File file = new File(getDataFolder().getPath(), pluginConfig.getDatabase().getDatabaseName() + ".db");
+
+        try {
+            if (!file.createNewFile()) {
+                getLogger().warning("This file already exists. File wasn't created.");
+            }
+        } catch (IOException e) {
+            LoggerUtil.logSevereException(e);
+        }
+        SqlLiteConnectionFactory<PowerCamera> connectionFactory = new SqlLiteConnectionFactory<>("powercamera-hikari");
+        connectionFactory.init(this, pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), "", "");
+        initFlyway(connectionFactory);
+        this.cameraStorage = new CameraSql(connectionFactory);
+        this.playerStorage = new PlayerSql(connectionFactory);
+        enableForeignKeys(connectionFactory);
+    }
+
+    private void initMySql() {
+        HikariConnectionFactory<PowerCamera> connectionFactory = new MySqlConnectionFactory<>("powercamera-hikari");
+        connectionFactory.init(this, pluginConfig.getDatabase().getAddress(), pluginConfig.getDatabase().getPort(), pluginConfig.getDatabase().getDatabaseName(), pluginConfig.getDatabase().getUsername(), pluginConfig.getDatabase().getPassword());
+        initFlyway(connectionFactory);
+        this.cameraStorage = new CameraSql(connectionFactory);
+        this.playerStorage = new PlayerSql(connectionFactory);
+    }
+
+    private void initHocon() {
+        try {
+            this.cameraStorage = new CameraConfigurate(this);
+            this.playerStorage = new PlayersConfigurate(this);
+        } catch (ConfigurateException e) {
+            LoggerUtil.logSevereException(e);
         }
     }
 
@@ -135,7 +150,6 @@ public class PowerCamera extends JavaPlugin {
         Flyway flyway = Flyway.configure(getClass().getClassLoader())
                 .dataSource(connectionFactory.getDataSource())
                 .baselineVersion("1")
-                .baselineOnMigrate(true)
                 .locations("classpath:db/base")
                 .load();
 
@@ -187,10 +201,10 @@ public class PowerCamera extends JavaPlugin {
 
     private @NotNull List<Integer> generateIntsInRange(int max) {
         List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < max; i++){
-			list.add(i);
-		}
-		return list;
+        for (int i = 0; i < max; i++) {
+            list.add(i);
+        }
+        return list;
     }
 
     public CameraManager getCameraManager() {
